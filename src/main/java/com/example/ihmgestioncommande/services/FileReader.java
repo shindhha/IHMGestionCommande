@@ -1,4 +1,6 @@
-package com.example.ihmgestioncommande;
+package com.example.ihmgestioncommande.services;
+
+import com.example.ihmgestioncommande.modeles.Article;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,8 +23,8 @@ public class FileReader {
     }
 
     // Lis le fichier de configuration et retourne une liste d'articles
-    public static ArrayList<Article> readConfigFile(File file) throws FileNotFoundException {
-        ArrayList<Article> articles = new ArrayList<>();
+    public static HashMap<String,Article> readConfigFile(File file) throws FileNotFoundException {
+        HashMap<String,Article> articles = new HashMap<>();
         ArrayList<String> header = readHeader(file);
         Scanner scanner = new Scanner(file);
         scanner.nextLine();
@@ -30,7 +32,7 @@ public class FileReader {
             String line = scanner.nextLine();
             String[] data = line.split(";");
             Article article = new Article(header, data);
-            articles.add(article);
+            articles.put(article.getNumero(), article);
         }
         return articles;
     }

@@ -1,4 +1,4 @@
-package com.example.ihmgestioncommande;
+package com.example.ihmgestioncommande.modeles;
 
 import java.lang.reflect.AccessFlag;
 import java.lang.reflect.Field;
@@ -17,11 +17,21 @@ public class Article {
     // Constructeur associant la liste des colonnes du fichier de configuration avec une série de données
     public Article(List<String> header, String[] data) {
         this.data = new HashMap<>();
-        for (int i = 0; i < header.size(); i++) {
+        for (int i = 0; i < header.size() - 1; i++) {
             this.data.put(header.get(i), data[i]);
         }
     }
 
+    @Override
+    public String toString() {
+        return data.get("Numero") + " " + data.get("Designation");
+    }
 
+    public String getNumero() {
+        return data.get("Numero");
+    }
 
+    public HashMap<String, String> getAttributs() {
+        return data;
+    }
 }

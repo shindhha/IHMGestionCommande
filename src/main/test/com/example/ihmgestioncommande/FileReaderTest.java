@@ -1,5 +1,7 @@
 package com.example.ihmgestioncommande;
 
+import com.example.ihmgestioncommande.modeles.Article;
+import com.example.ihmgestioncommande.services.FileReader;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -20,7 +22,7 @@ class FileReaderTest {
     void testFileReader() {
 
         // Etant donné un fichier avec les colonnes basique de configuration
-        String name = "ressources/conf/configuration.cnfg";
+        String name = "src/main/test/com/example/ihmgestioncommande/conf/Ref_articles.csv";
         File file = new File(name);
         // Lors de la lecture de la première ligne du fichier
         ArrayList<String> header = null;
@@ -30,12 +32,32 @@ class FileReaderTest {
             e.printStackTrace();
         }
         // Alors on récupère la liste des colonnes disponnible
-        assertEquals(header.get(0), "Numéro");
+        assertEquals(header.get(0), "Numero");
         assertEquals(header.get(1), "Designation");
         assertEquals(header.get(2), "Format");
         assertEquals(header.get(3), "Actions");
         assertEquals(header.get(4), "Emplacement");
         assertEquals(header.get(5), "QrCode");
+
+    }
+
+    @Test
+    void testReadConfigFile() {
+        // Etant donné un fichier avec les colonnes basique de configuration et 3 articles renseigner
+        String name = "src/main/test/com/example/ihmgestioncommande/conf/Ref_articles.csv";
+        File file = new File(name);
+        // Lors de la lecture de la première ligne du fichier
+        ArrayList<Article> articles = null;
+        try {
+            articles = FileReader.readConfigFile(file);
+        } catch (Exception e) {
+
+        }
+        // Alors on récupère la liste des colonnes disponnible
+        assertEquals(articles.size(), 2);
+        Article arcticle = articles.get(0);
+
+        assertEquals(arcticle.getNom(), "DS_Camera Blue Next Network-E4P_FSD-8013-011");
 
     }
 }
