@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,7 +48,7 @@ class FileReaderTest {
         String name = "src/main/test/com/example/ihmgestioncommande/conf/Ref_articles.csv";
         File file = new File(name);
         // Lors de la lecture de la première ligne du fichier
-        ArrayList<Article> articles = null;
+        HashMap<String, Article> articles = null;
         try {
             articles = FileReader.readConfigFile(file);
         } catch (Exception e) {
@@ -55,9 +56,8 @@ class FileReaderTest {
         }
         // Alors on récupère la liste des colonnes disponnible
         assertEquals(articles.size(), 2);
-        Article arcticle = articles.get(0);
-
-        assertEquals(arcticle.getNom(), "DS_Camera Blue Next Network-E4P_FSD-8013-011");
+        Article arcticle = articles.get("42400150");
+        assertEquals(arcticle.getDesignation(), "DS_Camera Blue Next Network-E4P_FSD-8013-011");
 
     }
 }

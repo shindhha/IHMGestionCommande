@@ -31,6 +31,29 @@ public class Article {
         return data.get("Numero");
     }
 
+    public String[] getActions() {
+        return data.get("Actions").split("-");
+    }
+    @Override
+    public boolean equals(Object obj) {
+
+        if (!(obj instanceof Article))
+            return false;
+        obj = (Article) obj;
+        for (String key : data.keySet()) {
+
+        }
+        return true;
+    }
+
+    public String getFormat() {
+        return data.get("Format");
+    }
+
+    public String getDesignation() {
+        return data.get("Designation");
+    }
+
     public HashMap<String, String> getAttributs() {
         return data;
     }

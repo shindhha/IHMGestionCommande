@@ -19,7 +19,7 @@ public class GestionCommandeApplication extends Application {
         stage.setScene(scene);
         stage.show();
         ControllerSaisie c = fxmlLoader.getController();
-        c.loadArticle();
+        c.initScene(scene);
     }
 
     public static void main(String[] args) {

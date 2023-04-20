@@ -1,6 +1,12 @@
-.h-100 {
+.article-info {
+    -fx-background-color: #f5f5f5;
+    -fx-border-color: #e3e3e3;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 10;
 }
 
 .body {
-
+    -fx-spacing: spacing;
 }

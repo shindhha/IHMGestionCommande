@@ -7,31 +7,37 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<HBox alignment="BOTTOM_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ihmgestioncommande.ControllerSaisie">
+<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="body" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ihmgestioncommande.ControllerSaisie">
    <children>
-      <VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="300.0" styleClass="h-100" stylesheets="@styles/style.css" />
-      <VBox alignment="BOTTOM_RIGHT" prefHeight="400.0" prefWidth="300.0" styleClass="h-100" stylesheets="@styles/style.css">
+      <VBox alignment="CENTER_LEFT" prefHeight="297.0" prefWidth="300.0" styleClass="h-100" stylesheets="@styles/style.css">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Numéro Commande :" />
+            <TextField fx:id="inputNoCommande" />
+            <VBox fx:id="articleView" prefHeight="200.0" prefWidth="100.0" />
+         </children></VBox>
+      <VBox alignment="CENTER_RIGHT" prefHeight="400.0" prefWidth="300.0" styleClass="h-100" stylesheets="@styles/style.css">
          <children>
             <VBox alignment="TOP_RIGHT" prefHeight="30.0" prefWidth="100.0">
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Nombre de produits" />
-                  <TextField prefWidth="120.0" />
+                  <TextField fx:id="inputNbArticle" prefWidth="120.0" />
                   <HBox prefHeight="25.0" prefWidth="200.0">
                      <children>
-                        <ChoiceBox prefWidth="150.0" />
+                        <ChoiceBox fx:id="listActions" prefWidth="150.0" />
                         <ChoiceBox fx:id="listArticles" prefHeight="25.0" prefWidth="150.0" />
                      </children>
                   </HBox>
                </children>
             </VBox>
-            <VBox prefHeight="200.0" prefWidth="100.0" />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+            <VBox fx:id="listProduitsSaisie" prefHeight="200.0" prefWidth="100.0" />
+            <Text fx:id="compteurNbProduitSaisie" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
             <HBox alignment="TOP_RIGHT" prefHeight="25.0" prefWidth="200.0" spacing="10.0">
                <children>
-                  <Button mnemonicParsing="false" text="Terminer la saisie" />
-                  <Button mnemonicParsing="false" text="Commencer une saisie" />
+                  <Button fx:id="btnTerminerSaisie" mnemonicParsing="false" onAction="#terminerSaisie" text="Terminer la saisie" />
+                  <Button fx:id="btnCommencerSaisie" mnemonicParsing="false" onAction="#startSaisie" text="Commencer une saisie" />
                </children>
             </HBox>
+            <Text fx:id="boiteErreur" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
          </children>
       </VBox>
    </children>
