@@ -58,6 +58,5 @@ class FileReaderTest {
         assertEquals(articles.size(), 2);
         Article arcticle = articles.get("42400150");
         assertEquals(arcticle.getDesignation(), "DS_Camera Blue Next Network-E4P_FSD-8013-011");
-
     }
 }
