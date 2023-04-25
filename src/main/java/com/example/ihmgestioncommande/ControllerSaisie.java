@@ -1,15 +1,14 @@
 package com.example.ihmgestioncommande;
 
+import com.example.ihmgestioncommande.exceptions.FormatInvalideException;
 import com.example.ihmgestioncommande.modeles.Article;
 import com.example.ihmgestioncommande.services.FileReader;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -49,13 +48,13 @@ public class ControllerSaisie {
     private ImageView qrCodeView;
     private Scene primaryScene;
     private int maxNbArticleSaisie;
-    private int nbArticleSaisie;
     private HashMap<String,Article> articles;
     private TextField inputNumeroSerie;
     private String numeroSerie;
     private List<String> listNumeroSerie;
 
-    private StringBuilder recherche;
+    // Mot entrer par l'utilisateur pour la recherche d'un produit dans la liste.
+    private StringBuilder input_recherche_article;
     public ControllerSaisie() {
         listNumeroSerie = new ArrayList<>();
     }
@@ -73,19 +72,21 @@ public class ControllerSaisie {
     public void initScene(Scene scene) {
         this.primaryScene = scene;
         btnTerminerSaisie.setDisable(true);
-        recherche = new StringBuilder();
-
-        listArticles.setOnKeyPressed(event -> {
-            // Si on appuie sur la touche backspace, on supprime le dernier caractère de la recherche
-            if (event.getCode() == KeyCode.BACK_SPACE)
-                recherche.deleteCharAt(recherche.length() - 1);
-            // Sinon on ajoute le caractère à la recherche
-            else
-            recherche.append(event.getText());
-            loadArticle();
-        });
+        input_recherche_article = new StringBuilder();
+        listArticles.setOnKeyPressed(event -> onRechercheArticle(event));
         loadArticle();
     }
+
+    public void onRechercheArticle(KeyEvent event) {
+        // Si on appuie sur la touche backspace, on supprime le dernier caractère de la recherche
+        if (event.getCode() == KeyCode.BACK_SPACE)
+            input_recherche_article.deleteCharAt(input_recherche_article.length() - 1);
+            // Sinon on ajoute le caractère à la recherche
+        else
+            input_recherche_article.append(event.getText());
+        loadArticle();
+    }
+
     public void loadArticle() {
 
         listArticles.getItems().clear();
@@ -96,7 +97,7 @@ public class ControllerSaisie {
         }
 
         for (Article article : articles.values()) {
-            if (Pattern.matches(".*"+ recherche + ".*", article.toString().toLowerCase())) {
+            if (Pattern.matches(".*"+ input_recherche_article + ".*", article.toString().toLowerCase())) {
                 listArticles.getItems().add(article.toString());
             }
         }
@@ -115,9 +116,7 @@ public class ControllerSaisie {
         articleView.getChildren().clear();
         listActions.getItems().clear();
         Article article = getSelectedArticle();
-        inputNumeroSerie = new TextField();
-        inputNumeroSerie.getStyleClass().add("textField");
-        articleView.getChildren().add(inputNumeroSerie);
+
         for (String action : article.getActions()) {
             listActions.getItems().add(action);
         }
@@ -127,42 +126,35 @@ public class ControllerSaisie {
 
 
 
-    public void validerSaisie() {
-        if (nbArticleSaisie >= maxNbArticleSaisie) {
-            throw new IllegalStateException("Vous avez atteint le nombre maximum d'article à saisir");
-        }
-        if (listNumeroSerie.contains(getNumeroSerie())) {
-            throw new IllegalStateException("Le numéro de série a déjà été saisi");
-        }
-        if (isNumeroValide(getFormat(), getNumeroSerie())) {
-            boiteErreur.setText("");
-            numeroSerie = getNumeroSerie();
-            Label label = new Label(numeroSerie);
+    public void validerSaisie() throws IllegalStateException, FormatInvalideException {
+        if (listNumeroSerie.size() >= maxNbArticleSaisie) throw new IllegalStateException("Vous avez atteint le nombre maximum d'article à saisir");
+        if (listNumeroSerie.contains(getNumeroSerie())) throw new IllegalStateException("Le numéro de série a déjà été saisi");
+        if (!isNumeroValide(getFormat(),getNumeroSerie())) throw new FormatInvalideException();
 
-            HBox hbox = new HBox();
-            hbox.getChildren().add(label);
-            Button button = new Button("X");
+        resetErrorMessage();
+        numeroSerie = getNumeroSerie();
+        Label label = new Label(numeroSerie);
+        Button button = new Button("X");
+        HBox hbox = new HBox();
+        hbox.getChildren().addAll(label,button);
+        button.setOnAction(event -> onDeleteProduit(hbox));
 
-            button.setOnAction(event -> {
-                listProduitsSaisie.getChildren().remove(hbox);
-                listNumeroSerie.remove(numeroSerie);
-                nbArticleSaisie--;
-                updateCompteur();
-                boiteErreur.setText("");
-            });
-            hbox.getChildren().add(button);
-            listProduitsSaisie.getChildren().add(hbox);
-            listNumeroSerie.add(numeroSerie);
-            inputNumeroSerie.clear();
-            nbArticleSaisie++;
-            updateCompteur();
-
-        }
+        listProduitsSaisie.getChildren().add(hbox);
+        listNumeroSerie.add(numeroSerie);
+        inputNumeroSerie.clear();
+        updateCompteur(listNumeroSerie.size());
     }
 
-    public void disableChamp(){
 
+    // verifier si le numero de serie est valide
+    public void onDeleteProduit(HBox hbox) {
+        listProduitsSaisie.getChildren().remove(hbox);
+        listNumeroSerie.remove(numeroSerie);
+        updateCompteur(listNumeroSerie.size());
+        boiteErreur.setText("");
     }
+
+
 
     public void startSaisie() {
 
@@ -170,33 +162,31 @@ public class ControllerSaisie {
 
             verifierChamp();
             maxNbArticleSaisie = Integer.parseInt(inputNbArticle.getText());
-            nbArticleSaisie = 0;
-            listArticles.setDisable(true);
-            listActions.setDisable(true);
-            inputNbArticle.setDisable(true);
-            btnCommencerSaisie.setDisable(true);
-            inputNoCommande.setDisable(true);
+            inputNumeroSerie = new TextField();
             inputNumeroSerie.requestFocus();
-            primaryScene.setOnKeyReleased(event -> {
-                try {
-                    validerSaisie();
-                } catch (IllegalStateException e) {
-                    boiteErreur.setText(e.getMessage());
-                }
-            });
-        } catch (IllegalStateException e) {
-            boiteErreur.setText(e.getMessage());
+            inputNumeroSerie.getStyleClass().add("textField");
+            articleView.getChildren().add(inputNumeroSerie);
+            disableChamp(listArticles, listActions, inputNbArticle, btnCommencerSaisie, inputNoCommande);
+            primaryScene.setOnKeyReleased(event -> onSaisieNumeroSerie());
         } catch (NumberFormatException e) {
             boiteErreur.setText("Le nombre d'article doit être un nombre");
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalStateException | IllegalArgumentException e) {
             boiteErreur.setText(e.getMessage());
         }
 
     }
 
+    public void onSaisieNumeroSerie() {
+        try {
+            validerSaisie();
+        } catch (IllegalStateException | FormatInvalideException e) {
+            boiteErreur.setText(e.getMessage());
+        }
+    }
+
 
     public void verifierChamp() throws IllegalStateException {
-        if (inputNbArticle.getText().isEmpty() || Integer.parseInt(inputNbArticle.getText()) == 0) {
+        if (inputNbArticle.getText().isEmpty() || Integer.parseInt(inputNbArticle.getText()) <= 0) {
             inputNbArticle.setText("1");
         }
         if (listArticles.getValue() == null || listArticles.getValue().isEmpty()) {
@@ -223,13 +213,9 @@ public class ControllerSaisie {
 
     public void terminerSaisie() throws IOException {
         primaryScene.setOnKeyReleased(null);
-        listArticles.setDisable(false);
-        listActions.setDisable(false);
-        inputNbArticle.setDisable(false);
-        btnCommencerSaisie.setDisable(false);
         listProduitsSaisie.getChildren().clear();
         btnTerminerSaisie.setDisable(true);
-        inputNoCommande.setDisable(false);
+        enableChamp(listActions, listActions, inputNbArticle, btnCommencerSaisie, inputNoCommande);
         File outputFile = new File("src/main/java/com/example/ihmgestioncommande/output/" + inputNoCommande.getText() +".csv");
         FileWriter fileWriter = new FileWriter(outputFile);
         fileWriter.write("Numero de commande : " + inputNoCommande.getText() + ";");
@@ -244,7 +230,7 @@ public class ControllerSaisie {
 
 
 
-    public void updateCompteur() {
+    public void updateCompteur(int nbArticleSaisie) {
         compteurNbProduitSaisie.setText(nbArticleSaisie + "/" + maxNbArticleSaisie);
         if (nbArticleSaisie == maxNbArticleSaisie) {
             btnTerminerSaisie.setDisable(false);
@@ -270,6 +256,25 @@ public class ControllerSaisie {
         String articleSelectionner = listArticles.getValue();
         String numero = articleSelectionner.split(" ")[0];
         return articles.get(numero);
+    }
+    private void resetErrorMessage() {
+        boiteErreur.setText("");
+    }
+
+    private void disableChamp(Control... fields) {
+        for (Control field : fields) {
+            field.setDisable(true);
+        }
+    }
+
+    private void enableChamp(Control... fields) {
+        for (Control field : fields) {
+            field.setDisable(false);
+        }
+    }
+
+    public void printErrorMessage(String message) {
+        boiteErreur.setText(message);
     }
 
 

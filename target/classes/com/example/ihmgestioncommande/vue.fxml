@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.TextField?>
@@ -8,18 +9,19 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="body" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ihmgestioncommande.ControllerSaisie">
+
+<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="658.0" prefWidth="877.0" styleClass="body" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ihmgestioncommande.ControllerSaisie">
    <children>
-      <ImageView fx:id="qrCodeView" fitHeight="402.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
-      <VBox alignment="TOP_RIGHT" prefHeight="400.0" prefWidth="300.0" styleClass="h-100" stylesheets="@styles/style.css">
+      <ImageView fx:id="qrCodeView" fitHeight="665.0" fitWidth="422.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" />
+      <VBox alignment="TOP_RIGHT" prefHeight="400.0" prefWidth="300.0" styleClass="h-100" stylesheets="@styles/style.css" HBox.hgrow="ALWAYS">
          <children>
-            <VBox prefHeight="30.0" prefWidth="100.0">
+            <VBox prefHeight="125.0" prefWidth="405.0" VBox.vgrow="ALWAYS">
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Nombre de produits" />
                   <TextField fx:id="inputNbArticle" prefWidth="120.0" styleClass="textField" />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Numéro Commande :" />
                   <TextField fx:id="inputNoCommande" styleClass="textField" />
-                  <HBox prefHeight="25.0" prefWidth="200.0">
+                  <HBox prefHeight="25.0" prefWidth="200.0" spacing="100.0">
                      <children>
                         <ChoiceBox fx:id="listActions" prefWidth="150.0" styleClass="list" />
                         <ChoiceBox fx:id="listArticles" prefHeight="25.0" prefWidth="150.0" styleClass="list" />
@@ -27,7 +29,8 @@
                   </HBox>
                </children>
             </VBox>
-            <VBox fx:id="listProduitsSaisie" prefHeight="200.0" prefWidth="100.0" />
+            <VBox fx:id="listProduitsSaisie" prefHeight="323.0" prefWidth="405.0" />
+            <VBox fx:id="articleView" alignment="TOP_RIGHT" prefHeight="70.0" prefWidth="405.0" />
             <Text fx:id="compteurNbProduitSaisie" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
             <HBox alignment="TOP_RIGHT" prefHeight="25.0" prefWidth="200.0" spacing="10.0">
                <children>
@@ -36,8 +39,10 @@
                </children>
             </HBox>
             <Text fx:id="boiteErreur" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
-            <VBox fx:id="articleView" alignment="TOP_RIGHT" prefHeight="200.0" prefWidth="100.0" />
          </children>
       </VBox>
    </children>
+   <padding>
+      <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+   </padding>
 </HBox>

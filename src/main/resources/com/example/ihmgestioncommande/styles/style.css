@@ -12,3 +12,10 @@
     -fx-padding: 10;
 }
 
+.textField {
+
+}
+
+.body {
+    -fx-pref-width: 100%;
+}
