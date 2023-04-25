@@ -1,6 +1,6 @@
 module com.example.ihmgestioncommande {
-    requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.controls;
 
 
     opens com.example.ihmgestioncommande to javafx.fxml;

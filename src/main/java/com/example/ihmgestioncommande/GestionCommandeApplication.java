@@ -14,7 +14,7 @@ public class GestionCommandeApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(GestionCommandeApplication.class.getResource("vue.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+        Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Gestions Commandes");
         stage.setScene(scene);
         stage.show();

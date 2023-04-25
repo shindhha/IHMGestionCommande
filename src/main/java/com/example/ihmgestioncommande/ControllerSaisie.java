@@ -2,22 +2,24 @@ package com.example.ihmgestioncommande;
 
 import com.example.ihmgestioncommande.modeles.Article;
 import com.example.ihmgestioncommande.services.FileReader;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-
+import javafx.scene.image.ImageView;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class ControllerSaisie {
@@ -43,6 +45,8 @@ public class ControllerSaisie {
     private VBox listProduitsSaisie;
     @FXML
     private TextField inputNoCommande;
+    @FXML
+    private ImageView qrCodeView;
     private Scene primaryScene;
     private int maxNbArticleSaisie;
     private int nbArticleSaisie;
@@ -50,6 +54,8 @@ public class ControllerSaisie {
     private TextField inputNumeroSerie;
     private String numeroSerie;
     private List<String> listNumeroSerie;
+
+    private StringBuilder recherche;
     public ControllerSaisie() {
         listNumeroSerie = new ArrayList<>();
     }
@@ -67,10 +73,22 @@ public class ControllerSaisie {
     public void initScene(Scene scene) {
         this.primaryScene = scene;
         btnTerminerSaisie.setDisable(true);
+        recherche = new StringBuilder();
+
+        listArticles.setOnKeyPressed(event -> {
+            // Si on appuie sur la touche backspace, on supprime le dernier caractère de la recherche
+            if (event.getCode() == KeyCode.BACK_SPACE)
+                recherche.deleteCharAt(recherche.length() - 1);
+            // Sinon on ajoute le caractère à la recherche
+            else
+            recherche.append(event.getText());
+            loadArticle();
+        });
         loadArticle();
     }
     public void loadArticle() {
 
+        listArticles.getItems().clear();
         try {
             articles = FileReader.readConfigFile(new File("src/main/resources/com/example/ihmgestioncommande/conf/Ref_articles.csv"));
         } catch (FileNotFoundException e) {
@@ -78,7 +96,9 @@ public class ControllerSaisie {
         }
 
         for (Article article : articles.values()) {
-            listArticles.getItems().add(article.toString());
+            if (Pattern.matches(".*"+ recherche + ".*", article.toString().toLowerCase())) {
+                listArticles.getItems().add(article.toString());
+            }
         }
 
         listArticles.setOnAction(event -> showArticle());
@@ -90,28 +110,19 @@ public class ControllerSaisie {
      * Vide
      * Affiche les informations de l'article sélectionné dans l'ihm
      * et fait apparaitre un champ de saisie pour le numéro de série
-     *
-     *
-     *
      */
     public void showArticle() {
         articleView.getChildren().clear();
         listActions.getItems().clear();
         Article article = getSelectedArticle();
-        for (String nomDuChamp : article.getAttributs().keySet()) {
-            String valeurDuChamp = article.getAttributs().get(nomDuChamp);
-            Label label = new Label(nomDuChamp + " : " + valeurDuChamp);
-            label.getStyleClass().add("article-info");
-            articleView.getChildren().add(label);
-
-        }
         inputNumeroSerie = new TextField();
-        inputNumeroSerie.getStyleClass().add("article-info");
+        inputNumeroSerie.getStyleClass().add("textField");
         articleView.getChildren().add(inputNumeroSerie);
         for (String action : article.getActions()) {
             listActions.getItems().add(action);
         }
-
+        // créer une image avec le qr
+        qrCodeView.setImage(new Image(article.getQrCode()));
     }
 
 
@@ -119,6 +130,9 @@ public class ControllerSaisie {
     public void validerSaisie() {
         if (nbArticleSaisie >= maxNbArticleSaisie) {
             throw new IllegalStateException("Vous avez atteint le nombre maximum d'article à saisir");
+        }
+        if (listNumeroSerie.contains(getNumeroSerie())) {
+            throw new IllegalStateException("Le numéro de série a déjà été saisi");
         }
         if (isNumeroValide(getFormat(), getNumeroSerie())) {
             boiteErreur.setText("");
@@ -198,11 +212,11 @@ public class ControllerSaisie {
         if (inputNoCommande.getText().isEmpty()) {
             throw new IllegalStateException("Pas de numéro de commande");
         }
-        if (listNumeroSerie.contains(getNumeroSerie())) {
-            throw new IllegalStateException("Le numéro de série a déjà été saisi");
-        }
+
 
     }
+
+
 
 
 
@@ -218,6 +232,10 @@ public class ControllerSaisie {
         inputNoCommande.setDisable(false);
         File outputFile = new File("src/main/java/com/example/ihmgestioncommande/output/" + inputNoCommande.getText() +".csv");
         FileWriter fileWriter = new FileWriter(outputFile);
+        fileWriter.write("Numero de commande : " + inputNoCommande.getText() + ";");
+        fileWriter.write("Article : " + getSelectedArticle().getDesignation() + ";");
+        fileWriter.write("Numéro de commande : " + inputNoCommande.getText() + ";");
+        fileWriter.write("Personne ayant éffectué la commande : " + System.getProperty("user.name") + "\n");
         for (String numeroSerie : listNumeroSerie) {
             fileWriter.write(numeroSerie + "\n");
         }

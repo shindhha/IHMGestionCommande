@@ -23,7 +23,7 @@ class FileReaderTest {
     void testFileReader() {
 
         // Etant donné un fichier avec les colonnes basique de configuration
-        String name = "src/main/test/com/example/ihmgestioncommande/conf/Ref_articles.csv";
+        String name = "src/main/test/com/example/ihmgestioncommande/conf/TestRef_articles1.csv";
         File file = new File(name);
         // Lors de la lecture de la première ligne du fichier
         ArrayList<String> header = null;
@@ -45,7 +45,7 @@ class FileReaderTest {
     @Test
     void testReadConfigFile() {
         // Etant donné un fichier avec les colonnes basique de configuration et 3 articles renseigner
-        String name = "src/main/test/com/example/ihmgestioncommande/conf/Ref_articles.csv";
+        String name = "src/main/test/com/example/ihmgestioncommande/conf/TestRef_articles1.csv";
         File file = new File(name);
         // Lors de la lecture de la première ligne du fichier
         HashMap<String, Article> articles = null;
@@ -58,5 +58,45 @@ class FileReaderTest {
         assertEquals(articles.size(), 2);
         Article arcticle = articles.get("42400150");
         assertEquals(arcticle.getDesignation(), "DS_Camera Blue Next Network-E4P_FSD-8013-011");
+        assertEquals("1",arcticle.getAttributs().get("QrCode"));
+        assertEquals("",arcticle.getQrCode());
+    }
+
+    @Test
+    void testFile() {
+        // Etant donné un fichier avec les colonnes basique de configuration
+        String name = "src/main/test/com/example/ihmgestioncommande/conf/TestRef_articles1.csv";
+        File file = new File(name);
+        // Lors de la lecture de la première ligne du fichier
+        ArrayList<String> header = null;
+        HashMap<String,Article> articles = null;
+        Article article = null;
+        try {
+            header = FileReader.readHeader(file);
+            articles = FileReader.readConfigFile(file);
+            article = articles.get("42400150");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        assertEquals("42400150",article.getAttributs().get("Numero"));
+        assertEquals("DS_Camera Blue Next Network-E4P_FSD-8013-011",article.getAttributs().get("Designation"));
+        assertEquals("cnnnn_nnnn",article.getAttributs().get("Format"));
+        assertEquals("OF",article.getAttributs().get("Actions"));
+        assertEquals("A-26-YB-02",article.getAttributs().get("Emplacement"));
+        assertEquals("1",article.getAttributs().get("QrCode"));
+        assertEquals("1",article.getAttributs().get("qds"));
+    }
+    @Test
+    void TestArticle() {
+        // Etant donné un fichier avec la colonne Numero
+        ArrayList<String> headers = new ArrayList<>();
+        headers.add("Numero");
+        // Et Avec les données suivantes
+        String[] data = {"42400150"};
+        // Lors de la création d'un article
+        Article article = new Article(headers, data);
+        // Alors on récupère les données
+        assertEquals("42400150",article.getAttributs().get("Numero"));
+
     }
 }
