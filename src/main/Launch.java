@@ -1,8 +1,12 @@
-package com.example.ihmgestioncommande;
+package main;
+
+import main.java.GestionCommandeApplication;
+
+import java.net.URL;
 
 public class Launch {
-    public static final String pathToResourcesFolder = "configuration.cnfg";
     public static void main(String[] args) {
         GestionCommandeApplication.main(args);
     }
+
 }

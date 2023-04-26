@@ -1,4 +1,4 @@
-package com.example.ihmgestioncommande.exceptions;
+package main.java.exceptions;
 
 public class FormatInvalideException extends Exception {
 

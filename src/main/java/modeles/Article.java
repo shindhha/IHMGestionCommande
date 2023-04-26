@@ -1,7 +1,6 @@
-package com.example.ihmgestioncommande.modeles;
+package main.java.modeles;
 
-import com.example.ihmgestioncommande.GestionCommandeApplication;
-
+import main.Launch;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +46,7 @@ public class Article {
      */
     public String getQrCode() {
         String nomQrCode = data.get("QrCode");
-        File file = new File(GestionCommandeApplication.class.getResource("qrcodes" ).getPath());
+        File file = new File(Launch.class.getResource("resources/qrcodes").getFile());
         return file.getPath() + "/" + nomQrCode + ".png";
     }
 }

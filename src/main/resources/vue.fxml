@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ihmgestioncommande.ControllerSaisie">
+<VBox alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.controllers.ControllerSaisie">
    <children>
       <ImageView fitHeight="186.0" fitWidth="351.0" pickOnBounds="true" preserveRatio="true">
          <image>

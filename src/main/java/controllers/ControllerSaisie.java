@@ -1,8 +1,8 @@
-package com.example.ihmgestioncommande;
+package main.java.controllers;
 
-import com.example.ihmgestioncommande.exceptions.FormatInvalideException;
-import com.example.ihmgestioncommande.modeles.Article;
-import com.example.ihmgestioncommande.services.FileReader;
+import main.java.exceptions.FormatInvalideException;
+import main.java.modeles.Article;
+import main.java.services.FileReader;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -13,6 +13,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.image.ImageView;
+import main.Launch;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -110,7 +112,7 @@ public class ControllerSaisie {
 
         listArticles.getItems().clear();
         try {
-            articles = FileReader.readConfigFile(new File("src/main/resources/com/example/ihmgestioncommande/conf/Ref_articles.csv"));
+            articles = FileReader.readConfigFile(new File(Launch.class.getResource("resources/Ref_articles.csv").getPath()));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }

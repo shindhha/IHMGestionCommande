@@ -1,6 +1,7 @@
-package com.example.ihmgestioncommande.services;
+package main.java.services;
 
-import com.example.ihmgestioncommande.modeles.Article;
+
+import main.java.modeles.Article;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,7 +36,7 @@ public class FileReader {
      * @throws FileNotFoundException Si le fichier n'existe pas
      */
     public static HashMap<String,Article> readConfigFile(File file) throws FileNotFoundException {
-        HashMap<String,Article> articles = new HashMap<>();
+        HashMap<String, Article> articles = new HashMap<>();
         ArrayList<String> header = readHeader(file);
         Scanner scanner = new Scanner(file);
         scanner.nextLine();
