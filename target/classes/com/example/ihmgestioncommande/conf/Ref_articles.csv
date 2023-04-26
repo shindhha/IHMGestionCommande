@@ -1,4 +1,4 @@
 Numero;Designation;Format;Actions;Emplacement;QrCode
-42400150;DS_Camera Blue Next Network-E4P_FSD-8013-011;cnnnn_nnnn;OF;A-26-YB-02;2
-42400131;CAMERA IP 1080P EN50155 PoE MICROPHONE LENS-6.0MM;cnnnn_cnnn;OC;A-33-1GB-01;0
-42400138;Vport P06HC-1MP CAM36-CT (Cubic) V1.0.0;^[a-zA-Z]{5}[0-9]{7}$;OF-OC;A-36-GB-07;1
+42400150;DS_Camera Blue Next Network-E4P_FSD-8013-011;cnnnn_nnnn;OF;A-26-YB-02;autres
+42400131;CAMERA IP 1080P EN50155 PoE MICROPHONE LENS-6.0MM;cnnnn_cnnn;OC;A-33-1GB-01;autres
+42400138;Vport P06HC-1MP CAM36-CT (Cubic) V1.0.0;^[a-zA-Z]{5}[0-9]{7}$;OF-OC;A-36-GB-07;autres

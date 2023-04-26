@@ -2,47 +2,61 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-
-<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="658.0" prefWidth="877.0" styleClass="body" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ihmgestioncommande.ControllerSaisie">
+<VBox alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ihmgestioncommande.ControllerSaisie">
    <children>
-      <ImageView fx:id="qrCodeView" fitHeight="665.0" fitWidth="422.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" />
-      <VBox alignment="TOP_RIGHT" prefHeight="400.0" prefWidth="300.0" styleClass="h-100" stylesheets="@styles/style.css" HBox.hgrow="ALWAYS">
+      <ImageView fitHeight="186.0" fitWidth="351.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@images/logo-actia.png" />
+         </image>
+      </ImageView>
+      <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="671.0" prefWidth="864.0" styleClass="body">
          <children>
-            <VBox prefHeight="125.0" prefWidth="405.0" VBox.vgrow="ALWAYS">
+            <ImageView fx:id="qrCodeView" fitHeight="665.0" fitWidth="393.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" />
+            <VBox alignment="TOP_RIGHT" prefHeight="621.0" prefWidth="360.0" spacing="20.0" styleClass="h-100" stylesheets="@styles/style.css" HBox.hgrow="ALWAYS">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Nombre de produits" />
-                  <TextField fx:id="inputNbArticle" prefWidth="120.0" styleClass="textField" />
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Numéro Commande :" />
-                  <TextField fx:id="inputNoCommande" styleClass="textField" />
-                  <HBox prefHeight="25.0" prefWidth="200.0" spacing="100.0">
+                  <VBox prefHeight="125.0" prefWidth="405.0" spacing="5.0" VBox.vgrow="ALWAYS">
                      <children>
-                        <ChoiceBox fx:id="listActions" prefWidth="150.0" styleClass="list" />
-                        <ChoiceBox fx:id="listArticles" prefHeight="25.0" prefWidth="150.0" styleClass="list" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Nombre de produits" />
+                        <TextField fx:id="inputNbArticle" prefWidth="120.0" promptText="Veulliez entrer le nombre de produits pour cette commande :" styleClass="textField" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Numéro Commande :" />
+                        <TextField fx:id="inputNoCommande" promptText="Entrez le numéro de la commande :" styleClass="textField" />
+                        <ComboBox fx:id="listArticles" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="406.0" promptText="Sélectionner l'article générique">
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </ComboBox>
+                        <ComboBox fx:id="listActions" minHeight="-Infinity" prefHeight="50.0" prefWidth="417.0" promptText="Sélectionner l'action a réaliser">
+                           <VBox.margin>
+                              <Insets bottom="10.0" top="10.0" />
+                           </VBox.margin>
+                        </ComboBox>
+                     </children>
+                  </VBox>
+                  <VBox fx:id="listProduitsSaisie" prefHeight="210.0" prefWidth="365.0" />
+                  <VBox fx:id="articleView" alignment="TOP_RIGHT" prefHeight="70.0" prefWidth="405.0" />
+                  <Text fx:id="compteurNbProduitSaisie" strokeType="OUTSIDE" strokeWidth="0.0" />
+                  <HBox alignment="TOP_RIGHT" prefHeight="25.0" prefWidth="200.0" spacing="10.0">
+                     <children>
+                        <Button fx:id="cancelSaisie" mnemonicParsing="false" onAction="#annulerSaisie" styleClass="btn" text="Annuler la saisie" />
+                        <Button fx:id="btnTerminerSaisie" mnemonicParsing="false" onAction="#terminerSaisie" styleClass="btn" text="Terminer la saisie" />
+                        <Button fx:id="btnCommencerSaisie" mnemonicParsing="false" onAction="#startSaisie" styleClass="btn" text="Commencer une saisie" />
                      </children>
                   </HBox>
+                  <Text fx:id="boiteErreur" strokeType="OUTSIDE" strokeWidth="0.0" />
                </children>
             </VBox>
-            <VBox fx:id="listProduitsSaisie" prefHeight="323.0" prefWidth="405.0" />
-            <VBox fx:id="articleView" alignment="TOP_RIGHT" prefHeight="70.0" prefWidth="405.0" />
-            <Text fx:id="compteurNbProduitSaisie" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
-            <HBox alignment="TOP_RIGHT" prefHeight="25.0" prefWidth="200.0" spacing="10.0">
-               <children>
-                  <Button fx:id="btnTerminerSaisie" mnemonicParsing="false" onAction="#terminerSaisie" styleClass="btn" text="Terminer la saisie" />
-                  <Button fx:id="btnCommencerSaisie" mnemonicParsing="false" onAction="#startSaisie" styleClass="btn" text="Commencer une saisie" />
-               </children>
-            </HBox>
-            <Text fx:id="boiteErreur" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
          </children>
-      </VBox>
+         <padding>
+            <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+         </padding>
+      </HBox>
    </children>
-   <padding>
-      <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
-   </padding>
-</HBox>
+</VBox>
