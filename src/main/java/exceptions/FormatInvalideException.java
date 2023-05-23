@@ -4,6 +4,6 @@ public class FormatInvalideException extends Exception {
 
     @Override
     public String getMessage() {
-        return "Le format du numéro de série est invalide";
+        return "Le format du numéro de série est invalide !";
     }
 }

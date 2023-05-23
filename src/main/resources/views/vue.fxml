@@ -3,7 +3,13 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
@@ -12,22 +18,39 @@
 
 <VBox alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.controllers.ControllerSaisie">
    <children>
+      <ToolBar prefHeight="40.0" prefWidth="200.0">
+         <tooltip>
+            <Tooltip text="Empty Tooltip" />
+         </tooltip>
+         <items>
+            <MenuButton mnemonicParsing="false" text="Outils">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#copyFileNameToClipBoard" text="Copier le nom du fichier de la commande" />
+                <MenuItem mnemonicParsing="false" onAction="#copyOutPutFolderNameToClipBoard" text="Copier le chemin du répertoire de sortie" />
+                  <MenuItem mnemonicParsing="false" onAction="#changerRepertoireSortie" text="Changer le répertoire de sortie" />
+                  <MenuItem mnemonicParsing="false" onAction="#changerFichierArticles" text="Changer la liste des articles" />
+              </items>
+            </MenuButton>
+         </items>
+      </ToolBar>
       <ImageView fitHeight="186.0" fitWidth="351.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@images/logo-actia.png" />
+            <Image url="@../images/logo-actia.png" />
          </image>
       </ImageView>
       <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="671.0" prefWidth="864.0" styleClass="body">
          <children>
             <ImageView fx:id="qrCodeView" fitHeight="665.0" fitWidth="393.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" />
-            <VBox alignment="TOP_RIGHT" prefHeight="621.0" prefWidth="360.0" spacing="20.0" styleClass="h-100" stylesheets="@styles/style.css" HBox.hgrow="ALWAYS">
+            <VBox alignment="TOP_RIGHT" prefHeight="621.0" prefWidth="360.0" spacing="20.0" styleClass="h-100" stylesheets="@../styles/style.css" HBox.hgrow="ALWAYS">
                <children>
                   <VBox prefHeight="125.0" prefWidth="405.0" spacing="5.0" VBox.vgrow="ALWAYS">
                      <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Nombre de produits" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Nombre de produits :" />
                         <TextField fx:id="inputNbArticle" prefWidth="120.0" promptText="Veulliez entrer le nombre de produits pour cette commande :" styleClass="textField" />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Numéro Commande :" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Numéro Commande/Traitement :" />
                         <TextField fx:id="inputNoCommande" promptText="Entrez le numéro de la commande :" styleClass="textField" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Numéro de ligne :" />
+                        <TextField fx:id="inputNoLigne" promptText="Entrez le numéro de la commande :" styleClass="textField" />
                         <ComboBox fx:id="listArticles" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="406.0" promptText="Sélectionner l'article générique">
                            <VBox.margin>
                               <Insets top="10.0" />
@@ -38,19 +61,24 @@
                               <Insets bottom="10.0" top="10.0" />
                            </VBox.margin>
                         </ComboBox>
+                        <Label text="Liste des numéros de série :" />
                      </children>
                   </VBox>
-                  <VBox fx:id="listProduitsSaisie" prefHeight="210.0" prefWidth="365.0" />
-                  <VBox fx:id="articleView" alignment="TOP_RIGHT" prefHeight="70.0" prefWidth="405.0" />
+                  <ScrollPane>
+                     <content>
+                        <VBox fx:id="listProduitsSaisie" prefHeight="227.0" prefWidth="418.0" />
+                     </content>
+                  </ScrollPane>
+                  <VBox fx:id="inputNumeroSerieContainer" alignment="TOP_RIGHT" prefHeight="70.0" prefWidth="405.0" />
                   <Text fx:id="compteurNbProduitSaisie" strokeType="OUTSIDE" strokeWidth="0.0" />
                   <HBox alignment="TOP_RIGHT" prefHeight="25.0" prefWidth="200.0" spacing="10.0">
                      <children>
-                        <Button fx:id="cancelSaisie" mnemonicParsing="false" onAction="#annulerSaisie" styleClass="btn" text="Annuler la saisie" />
-                        <Button fx:id="btnTerminerSaisie" mnemonicParsing="false" onAction="#terminerSaisie" styleClass="btn" text="Terminer la saisie" />
-                        <Button fx:id="btnCommencerSaisie" mnemonicParsing="false" onAction="#startSaisie" styleClass="btn" text="Commencer une saisie" />
+                        <Button fx:id="btnAnnulerSaisie" mnemonicParsing="false" onAction="#setDefaultIHMState" styleClass="btn" text="Annuler la saisie" />
+                        <Button fx:id="btnTerminerSaisie" mnemonicParsing="false" onAction="#makeOutputFile" styleClass="btn" text="Terminer la saisie" />
+                        <Button fx:id="btnCommencerSaisie" mnemonicParsing="false" onAction="#commencerSaisie" styleClass="btn" text="Commencer une saisie" />
                      </children>
                   </HBox>
-                  <Text fx:id="boiteErreur" strokeType="OUTSIDE" strokeWidth="0.0" />
+                  <Text fx:id="boiteErreur" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="error_message" />
                </children>
             </VBox>
          </children>

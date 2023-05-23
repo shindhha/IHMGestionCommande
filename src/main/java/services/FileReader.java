@@ -1,10 +1,13 @@
 package main.java.services;
 
 
+import main.Launch;
 import main.java.modeles.Article;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -35,7 +38,7 @@ public class FileReader {
      * @return La HashMap associant le numéro d'article en tant que clé à un objet Article
      * @throws FileNotFoundException Si le fichier n'existe pas
      */
-    public static HashMap<String,Article> readConfigFile(File file) throws FileNotFoundException {
+    public static HashMap<String,Article> readArticleConfigFile(File file) throws FileNotFoundException {
         HashMap<String, Article> articles = new HashMap<>();
         ArrayList<String> header = readHeader(file);
         Scanner scanner = new Scanner(file);
@@ -47,6 +50,30 @@ public class FileReader {
             articles.put(article.getNumero(), article);
         }
         return articles;
+    }
+
+    public static String[] readConfigFile(BufferedReader file) throws FileNotFoundException {
+        Scanner scanner = new Scanner(file);
+        String line = scanner.nextLine();
+        String[] params = line.split(";");
+        return params;
+    }
+
+    public static void writeConfigFile(File file, String... params) {
+        try {
+            FileWriter writer = new FileWriter(file);
+            String line = "";
+            for (String param : params) {
+                line += param + ";";
+            }
+            writer.write(line);
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void writeConfigFile(String... params) {
+        writeConfigFile(new File(Launch.configurationPath), params);
     }
 
 }

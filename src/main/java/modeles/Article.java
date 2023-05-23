@@ -25,6 +25,8 @@ public class Article {
     public String toString() {
         return data.get("Numero") + " " + data.get("Designation");
     }
+
+
     public String getNumero() {
         return data.get("Numero");
     }

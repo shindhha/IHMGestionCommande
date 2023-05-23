@@ -7,20 +7,24 @@ import javafx.stage.Stage;
 import main.Launch;
 import main.java.controllers.ControllerSaisie;
 
+import java.io.File;
 import java.io.IOException;
-
+import main.java.services.FileReader;
 public class GestionCommandeApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Launch.class.getResource("resources/vue.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Launch.class.getResource("resources/views/vue.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Gestions Commandes");
         stage.setScene(scene);
         stage.show();
-        ControllerSaisie c = fxmlLoader.getController();
-        c.initScene(scene);
+        ControllerSaisie controller = fxmlLoader.getController();
+
+        controller.initScene(scene);
+
     }
+
 
     public static void main(String[] args) {
 
