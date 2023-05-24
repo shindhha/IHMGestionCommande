@@ -1,9 +1,13 @@
 package main.java.controllers;
-
+import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.advanced.AdvancedPlayer;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
@@ -21,12 +25,12 @@ import main.java.modeles.Article;
 import main.java.modeles.Commande;
 import main.java.modeles.OC;
 import main.java.modeles.OF;
-import main.java.services.FileReader;
+import main.java.services.Configuration;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.*;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
@@ -65,20 +69,21 @@ public class ControllerSaisie implements Initializable {
     private HashMap<String,Article> articles;
     public Commande currentCommande;
 
+    private Configuration config;
+
 
     // Mot entrer par l'utilisateur pour la recherche d'un produit dans la liste.
     private StringBuilder mot_recherche_article;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        String[] config = new String[0];
         mot_recherche_article = new StringBuilder();
         try {
-            config = FileReader.readConfigFile(new BufferedReader(new InputStreamReader(Launch.class.getResourceAsStream(Launch.configurationPath))));
-            Launch.pathOutPutFolder = config[0] == "" ? Launch.defaultPathOutPutFolder : config[0];
-            Launch.listArticleConfiguration = config[1];
+            config = new Configuration();
         } catch (FileNotFoundException e) {
             boiteErreur.setText("Le fichier de configuration n'a pas été trouvé");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
     public ControllerSaisie() {
@@ -198,8 +203,8 @@ public class ControllerSaisie implements Initializable {
         for (String action : selectedArticle.getActions()) {
             listActions.getItems().add(action);
         }
-        // créer une image avec le qr
-        qrCodeView.setImage(new Image(selectedArticle.getQrCode()));
+        // créer une image avec le qr code de l'article sélectionné
+        qrCodeView.setImage(new Image(config.pathQrCodes + selectedArticle.getQrCode()));
     }
 
 
@@ -276,13 +281,25 @@ public class ControllerSaisie implements Initializable {
      * pour afficher le message d'erreur dans la boite d'erreur.
      */
     public void onSaisieNumeroSerie(KeyEvent event) {
+        AdvancedPlayer player = null;
+        try {
+            player = new AdvancedPlayer(Launch.class.getResourceAsStream("sound/beep-beep-6151.mp3"));
+        } catch (JavaLayerException e) {
+            e.printStackTrace();
+        }
         try {
             if (event.getCode() == KeyCode.DOWN) {
                 inputNumeroSerie.requestFocus();
                 ajouterNumeroSerie(inputNumeroSerie.getText());
+
             }
         } catch (IllegalStateException e) {
             boiteErreur.setText(e.getMessage());
+            try {
+                player.play();
+            } catch (JavaLayerException ex) {
+                boiteErreur.setText("Erreur lors de la lecture du son");
+            }
         }
     }
 
@@ -376,7 +393,7 @@ public class ControllerSaisie implements Initializable {
     public void copyOutPutFolderNameToClipBoard() {
         Clipboard clipboard = Clipboard.getSystemClipboard();
         ClipboardContent content = new ClipboardContent();
-        content.putString(Launch.pathOutPutFolder);
+        content.putString(config.pathOutPutFolder);
         clipboard.setContent(content);
     }
 
@@ -385,9 +402,9 @@ public class ControllerSaisie implements Initializable {
         directoryChooser.setTitle("Choisir le répertoire de sortie");
         File selectedDirectory = directoryChooser.showDialog(primaryScene.getWindow());
         if (selectedDirectory != null) {
-            Launch.pathOutPutFolder = selectedDirectory.getAbsolutePath() + "\\";
+            config.pathOutPutFolder = selectedDirectory.getAbsolutePath() + "\\";
         }
-        FileReader.writeConfigFile(Launch.pathOutPutFolder, Launch.listArticleConfiguration);
+        config.writeConfigFile();
     }
 
     public void changerFichierArticles() {
@@ -395,16 +412,16 @@ public class ControllerSaisie implements Initializable {
         fileChooser.setTitle("Choisir le fichier d'articles");
         File selectedFile = fileChooser.showOpenDialog(primaryScene.getWindow());
         if (selectedFile != null) {
-            Launch.listArticleConfiguration = selectedFile.getAbsolutePath();
+            config.listArticleConfiguration = selectedFile.getAbsolutePath();
         }
-        FileReader.writeConfigFile(Launch.pathOutPutFolder, Launch.listArticleConfiguration);
+        config.writeConfigFile();
         listArticles.getItems().clear();
         loadArticle();
     }
 
     private void loadArticle() {
         try {
-            articles = FileReader.readArticleConfigFile(new File(Launch.listArticleConfiguration));
+            articles = config.readArticleConfigFile();
             printArticle(articles);
             boiteErreur.setText("");
         } catch (Exception e) {
@@ -412,7 +429,34 @@ public class ControllerSaisie implements Initializable {
         }
     }
 
+    public void afficherDocumentation() {
 
+        try {
+            Desktop.getDesktop().open(new File(config.pathDocumentation));
+        } catch (IOException e) {
+            boiteErreur.setText("Le fichier de documentation n'a pas été trouvé");
+        }
+    }
+
+    public void loadDocumentation() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choisir le fichier d'articles");
+        File selectedDirectory = fileChooser.showOpenDialog(primaryScene.getWindow());
+        if (selectedDirectory != null) {
+            config.pathDocumentation = selectedDirectory.getAbsolutePath() + "\\";
+        }
+        config.writeConfigFile();
+    }
+
+    public void loadQrCodes() {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Choisir le répertoire des qrcodes");
+        File selectedDirectory = directoryChooser.showDialog(primaryScene.getWindow());
+        if (selectedDirectory != null) {
+            config.pathQrCodes = selectedDirectory.getAbsolutePath() + "\\";
+        }
+        config.writeConfigFile();
+    }
 
 
     /**

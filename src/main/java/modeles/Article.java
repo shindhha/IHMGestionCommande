@@ -48,7 +48,6 @@ public class Article {
      */
     public String getQrCode() {
         String nomQrCode = data.get("QrCode");
-        File file = new File(Launch.class.getResource("resources/qrcodes").getFile());
-        return file.getPath() + "/" + nomQrCode + ".png";
+        return nomQrCode + ".png";
     }
 }

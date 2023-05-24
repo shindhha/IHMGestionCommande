@@ -13,6 +13,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
@@ -29,8 +30,11 @@
                 <MenuItem mnemonicParsing="false" onAction="#copyOutPutFolderNameToClipBoard" text="Copier le chemin du répertoire de sortie" />
                   <MenuItem mnemonicParsing="false" onAction="#changerRepertoireSortie" text="Changer le répertoire de sortie" />
                   <MenuItem mnemonicParsing="false" onAction="#changerFichierArticles" text="Changer la liste des articles" />
+                  <MenuItem mnemonicParsing="false" onAction="#loadQrCodes" text="Charger les Qr Codes" />
+                  <MenuItem mnemonicParsing="false" onAction="#loadDocumentation" text="Charger la documentation" />
               </items>
             </MenuButton>
+            <Button mnemonicParsing="false" onAction="#afficherDocumentation" text="Aide" />
          </items>
       </ToolBar>
       <ImageView fitHeight="186.0" fitWidth="351.0" pickOnBounds="true" preserveRatio="true">
@@ -40,7 +44,11 @@
       </ImageView>
       <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="671.0" prefWidth="864.0" styleClass="body">
          <children>
-            <ImageView fx:id="qrCodeView" fitHeight="665.0" fitWidth="393.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" />
+            <Pane prefHeight="621.0" prefWidth="422.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+               <children>
+                  <ImageView fx:id="qrCodeView" fitHeight="237.0" fitWidth="194.0" layoutX="118.0" layoutY="182.0" pickOnBounds="true" preserveRatio="true" />
+               </children>
+            </Pane>
             <VBox alignment="TOP_RIGHT" prefHeight="621.0" prefWidth="360.0" spacing="20.0" styleClass="h-100" stylesheets="@../styles/style.css" HBox.hgrow="ALWAYS">
                <children>
                   <VBox prefHeight="125.0" prefWidth="405.0" spacing="5.0" VBox.vgrow="ALWAYS">

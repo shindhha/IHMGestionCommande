@@ -1,15 +1,16 @@
 import main.java.modeles.Article;
-import main.java.services.FileReader;
+import main.java.services.Configuration;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileReaderTest {
+class ConfigurationTest {
     /* Par défaut un fichier de configuration est prévue avec les colonnes :
     * - Numéro d'article
     * - Designation d'article
@@ -18,6 +19,7 @@ class FileReaderTest {
     * - Emplacement dans le magasin
     * - Url vers une image d'un qr code de configuration pour la scannette
     */
+    private Configuration configuration;
     private static final String path = "C:\\Users\\g.medard\\eclipse-workspace\\IHMGestionCommande\\test\\conf\\";
     @Test
     void testFileReader() {
@@ -28,7 +30,7 @@ class FileReaderTest {
         // Lors de la lecture de la première ligne du fichier
         ArrayList<String> header = null;
         try {
-            header = FileReader.readHeader(file);
+            header = configuration.readHeader(file);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -49,7 +51,7 @@ class FileReaderTest {
         // Lors de la lecture de la première ligne du fichier
         HashMap<String, Article> articles = null;
         try {
-            articles = FileReader.readArticleConfigFile(file);
+            articles = configuration.readArticleConfigFile(file);
         } catch (Exception e) {
 
         }
@@ -70,8 +72,8 @@ class FileReaderTest {
         HashMap<String,Article> articles = null;
         Article article = null;
         try {
-            header = FileReader.readHeader(file);
-            articles = FileReader.readArticleConfigFile(file);
+            header = configuration.readHeader(file);
+            articles = configuration.readArticleConfigFile(file);
             article = articles.get("42400150");
         } catch (Exception e) {
             e.printStackTrace();
@@ -97,9 +99,22 @@ class FileReaderTest {
     }
     @Test
     void writeConfigFile() throws FileNotFoundException {
-        FileReader.writeConfigFile(new File(path + "TestConfigFile.csv"),"Fichier1","Fichier2");
+        configuration.writeConfigFile(new File(path + "TestConfigFile.csv"),"Fichier1","Fichier2");
         //String[] paths = FileReader.readConfigFile(new File(path + "TestConfigFile.csv"));
         //assertEquals("Fichier1",paths[0]);
         //assertEquals("Fichier2",paths[1]);
+    }
+
+    @Test
+    void createConfigFile() throws IOException {
+        // Etant donner un utilisateur lançant l'application pour la premiere fois et n'ayant pas de fichier de configuration
+
+        // Quand on créer l'objet configuration
+        Configuration configuration = new Configuration();
+
+        // Alors une copie du fichier de configuration interne est créer dans le dossier utilisateur window
+        File file = new File(System.getProperty("user.home") + "\\IHMGestionCommande\\configuration.csv");
+        assertTrue(file.exists());
+        configuration.deleteConfigFile();
     }
 }

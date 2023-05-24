@@ -7,9 +7,8 @@ import javafx.stage.Stage;
 import main.Launch;
 import main.java.controllers.ControllerSaisie;
 
-import java.io.File;
 import java.io.IOException;
-import main.java.services.FileReader;
+
 public class GestionCommandeApplication extends Application {
 
     @Override
