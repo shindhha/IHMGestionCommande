@@ -89,7 +89,7 @@ public class ControllerSaisie implements Initializable {
             e.printStackTrace();
         }
     }
-
+    // TODO : A tester
     public void popUpMdp() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Mot de passe");
@@ -117,30 +117,6 @@ public class ControllerSaisie implements Initializable {
     }
     public ControllerSaisie() {
     }
-    public ControllerSaisie(AdvancedPlayer player) {
-        this.soundPlayer = player;
-    }
-    public ControllerSaisie(TextField inputNumeroSerie, Text compteurNbProduitSaisie) {
-        this.compteurNbProduitSaisie = compteurNbProduitSaisie;
-        this.inputNumeroSerie = inputNumeroSerie;
-        this.inputNumeroSerieContainer = new VBox();
-        this.btnTerminerSaisie = new Button();
-        this.btnCommencerSaisie = new Button();
-        this.btnAnnulerSaisie = new Button();
-        this.primaryScene = new Scene(new HBox());
-        this.boiteErreur = new Text();
-        this.listProduitsSaisie = new VBox();
-    }
-
-
-    // Contructeur de test
-    public ControllerSaisie(Commande currentCommande) {
-        this.currentCommande = currentCommande;
-    }
-
-
-
-
 
 
     /**
@@ -162,6 +138,7 @@ public class ControllerSaisie implements Initializable {
      * qui est ensuite utilisé pour filtrer les articles et ne garder que ceux qui contiennent le mot
      * @param event : KeyEvent permet de récupérer la touche presser
      */
+    // TODO : A tester
     public void onRechercheArticle(KeyEvent event) {
 
         // Si on appuie sur la touche backspace, on supprime le dernier caractère de la recherche
@@ -213,6 +190,7 @@ public class ControllerSaisie implements Initializable {
      * affiche le qr code permettant de configurer la scanette pour l'article sélectionné.
      * @param selectedArticle : article sélectionné dans la liste déroulante.
      */
+    // TODO : A tester
     public void useArticle(Article selectedArticle) {
         inputNumeroSerieContainer.getChildren().clear();
         listActions.getItems().clear();
@@ -275,6 +253,7 @@ public class ControllerSaisie implements Initializable {
      * @param hbox : HBox qui contient le label et le bouton de suppression du numéro de série
      * @param aSupprimer : numéro de série du produit à supprimer.
      */
+    // TODO : A tester
     public void onDeleteProduit(HBox hbox,String aSupprimer) {
         listProduitsSaisie.getChildren().remove(hbox);
         currentCommande.remove(aSupprimer);
@@ -290,6 +269,7 @@ public class ControllerSaisie implements Initializable {
      *  Ajoute un listener sur toute la scene qui écoute les touches du clavier pour verifier le format des numéros de série
      *  Si une erreur est détecté, son message est affiché dans la boite d'erreur
      */
+    // TODO : A tester
     public void commencerSaisie() {
 
         try {
@@ -301,7 +281,7 @@ public class ControllerSaisie implements Initializable {
             inputNumeroSerieContainer.getChildren().add(inputNumeroSerie);
             disableChamp(listArticles, listActions, inputNbArticle, btnCommencerSaisie, inputNoCommande,inputNoLigne);
             btnAnnulerSaisie.setDisable(false);
-            primaryScene.setOnKeyReleased(event -> onSaisieNumeroSerie(event));
+            primaryScene.setOnKeyPressed(event -> onSaisieNumeroSerie(event));
 
         } catch (NumberFormatException e) {
             boiteErreur.setText("Le nombre d'article doit être un nombre");
@@ -322,11 +302,9 @@ public class ControllerSaisie implements Initializable {
             if (event.getCode() == KeyCode.DOWN) {
                 inputNumeroSerie.requestFocus();
                 ajouterNumeroSerie(inputNumeroSerie.getText());
-
             }
         } catch (IllegalStateException e) {
             boiteErreur.setText(e.getMessage());
-
         }
     }
 
@@ -371,6 +349,7 @@ public class ControllerSaisie implements Initializable {
      * Désactive le champ de saisie du numéro de série, le bouton annuler la saisie.
      * Vide la liste des numéros de série
      */
+    // TODO : A tester
     public void setDefaultIHMState() {
         primaryScene.setOnKeyReleased(null);
         listProduitsSaisie.getChildren().clear();
@@ -489,6 +468,7 @@ public class ControllerSaisie implements Initializable {
     /**
      * @return Article articles L'article sélectionné par l'utilisateur dans la liste des articles
      */
+    // TODO : A tester
     public Article getSelectedArticle() {
         String articleSelectionner = listArticles.getValue();
         String numero = articleSelectionner.split(" ")[0];
@@ -510,9 +490,7 @@ public class ControllerSaisie implements Initializable {
         return boiteErreur.getText();
     }
 
-    public TextField getInputNumeroSerie() {
-        return inputNumeroSerie;
-    }
+
 
     public VBox getListProduitsSaisie() {
         return listProduitsSaisie;

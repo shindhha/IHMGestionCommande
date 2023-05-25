@@ -1,78 +1,76 @@
 package controllers;
 
+import exceptions.FormatInvalideException;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.advanced.AdvancedPlayer;
-
-import controllers.ControllerSaisie;
-import exceptions.FormatInvalideException;
 import modeles.Article;
 import modeles.Commande;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
+import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationTest;
+import org.testfx.osgi.service.TestFx;
 
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static controllers.ControllerSaisieTest.InputJavaFx.*;
 class ControllerSaisieTest extends ApplicationTest {
-    public String[] fieldToMock = {
-            "listArticles","listActions","inputNbArticle","inputNumeroSerieContainer","btnTerminerSaisie",
-            "btnCommencerSaisie","btnAnnulerSaisie","compteurNbProduitSaisie","boiteErreur","listProduitsSaisie",
-            "inputNoCommande","qrCodeView","inputNoLigne"
-    };
-
-    enum InputJavaFx {
-        listArticles("listArticles",ComboBox.class),listActions("listActions",ComboBox.class),inputNbArticle("inputNbArticle",TextField.class),
-        inputNumeroSerieContainer("inputNumeroSerieContainer",VBox.class),btnTerminerSaisie("btnTerminerSaisie",Button.class),
-        btnCommencerSaisie("btnCommencerSaisie",Button.class),btnAnnulerSaisie("btnAnnulerSaisie",Button.class),
-        compteurNbProduitSaisie("compteurNbProduitSaisie",Text.class), boiteErreur("boiteErreur",Text.class),
-        listProduitsSaisie("listProduitsSaisie",VBox.class), inputNoCommande("inputNoCommande",TextField.class),
-        qrCodeView("qrCodeView",ImageView.class),inputNoLigne("inputNoLigne",TextField.class),inputNumeroSerie("inputNumeroSerie",TextField.class);
-        private String fieldName;
-        @Mock
-        private Object mock;
-        InputJavaFx(String fieldName, Class<?> type) {
-            this.fieldName = fieldName;
-            mock = mock(type);
-
-        }
 
 
-    }
+    @Spy
+    private ComboBox<String> listArticles;
+    @Spy
+    private ComboBox<String> listActions;
+    @Spy
+    private TextField inputNbArticle;
+    @Spy
+    private VBox inputNumeroSerieContainer;
+    @Mock
+    private Button btnTerminerSaisie;
+    @Mock
+    private Button btnCommencerSaisie;
+    @Mock
+    private Button btnAnnulerSaisie;
+    @Spy
+    private Text compteurNbProduitSaisie;
+    @Spy
+    private Text boiteErreur;
+    @Spy
+    private VBox listProduitsSaisie;
+    @Spy
+    private TextField inputNoCommande;
+    @Mock
+    private ImageView qrCodeView;
+    @Spy
+    private TextField inputNoLigne;
+    @Mock
+    private MenuButton outilsConfig;
+    @Spy
+    private TextField inputNumeroSerie;
+    @Spy
+    private StringBuilder mot_recherche_article;
+    private Scene primaryScene;
 
 
-    void mockField(InputJavaFx... fields) throws NoSuchFieldException {
-        for (InputJavaFx inputFx : fields) {
-            String s = inputFx.fieldName;
-            Field field = ControllerSaisie.class.getDeclaredField(s);
-            try {
-                field.setAccessible(true);
-                field.set(controllerTest, inputFx.mock);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    ControllerSaisie controllerTest;
+    @InjectMocks
+    private ControllerSaisie controllerTest;
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/vue.fxml"));
@@ -83,6 +81,7 @@ class ControllerSaisieTest extends ApplicationTest {
         controllerTest = fxmlLoader.getController();
 
         controllerTest.initScene(scene);
+        primaryScene = scene;
     }
 
     private List<String> colonnes = Arrays.asList("Numero","Designation","Format","Actions","QrCode");
@@ -108,11 +107,9 @@ class ControllerSaisieTest extends ApplicationTest {
     }
 
     @Test
-    void ajouterNumeroSerieTest() throws FormatInvalideException {
+    void ajouterNumeroSerie() throws FormatInvalideException {
+        MockitoAnnotations.openMocks(this);
         Commande currentCommande = mock(Commande.class);
-        TextField inputNumeroSerie = new TextField();
-        Text compteur = spy(new Text());
-        ControllerSaisie controllerTest = new ControllerSaisie(inputNumeroSerie,compteur);
         doReturn(50).when(currentCommande).getNbMaxNumeroSerie();
         doReturn(1).when(currentCommande).size();
         controllerTest.currentCommande = currentCommande;
@@ -120,16 +117,14 @@ class ControllerSaisieTest extends ApplicationTest {
 
         assertTrue(controllerTest.getErrorMessage().isEmpty());
         assertEquals(1,controllerTest.getListProduitsSaisie().getChildren().size());
-        assertEquals("1/50",compteur.getText());
+        assertEquals("1/50",compteurNbProduitSaisie.getText());
         assertTrue(inputNumeroSerie.getText().isEmpty());
 
     }
 
-
-
     @Test
-    void ajouterNumeroSerieDejaAjouterTest() throws FormatInvalideException, NoSuchFieldException, IllegalAccessException {
-        mockField(inputNumeroSerie);
+    void ajouterNumeroSerieDejaAjouter() throws FormatInvalideException, NoSuchFieldException, IllegalAccessException {
+        MockitoAnnotations.openMocks(this);
         // Etant donner le nombre de numéro de série maximum atteint
         String numero = "TBAKE1037059";
         Commande currentCommande = mock(Commande.class);
@@ -144,7 +139,7 @@ class ControllerSaisieTest extends ApplicationTest {
     }
     @Test
     void ajouterNumeroSerieMaxNbArticleAtteint() throws FormatInvalideException, NoSuchFieldException, IllegalAccessException {
-        mockField(inputNumeroSerie);
+        MockitoAnnotations.openMocks(this);
         // Etant donner le nombre de numéro de série maximum atteint
         String numero = "TBAKE1037059";
         Commande currentCommande = mock(Commande.class);
@@ -152,6 +147,7 @@ class ControllerSaisieTest extends ApplicationTest {
         doThrow(exception).when(currentCommande).ajouterNumeroSerie(numero);
         doReturn("Le numéro de série a déjà été saisi !").when(exception).getMessage();
         controllerTest.currentCommande = currentCommande;
+        doNothing().when(inputNumeroSerie).clear();
         controllerTest.ajouterNumeroSerie(numero);
         // On attend qu'une erreur soit propagée lors de l'ajout du numéro de série
 
@@ -161,7 +157,7 @@ class ControllerSaisieTest extends ApplicationTest {
 
 
     @Test
-    void filtrerArticleMotPasContenueTest() {
+    void filtrerArticleMotPasContenue() {
         // Etant donner un mot rechercher par l'utilisateur et une liste d'article dont le mot n'est contenue par aucun des articles
         String motRechercher = "Mot inconue";
         HashMap<String, Article> articles = getDefaultArticleList();
@@ -216,50 +212,254 @@ class ControllerSaisieTest extends ApplicationTest {
     }
 
     @Test
-    void commencerSaisieTest() throws NoSuchFieldException {
+    void commencerSaisie() throws NoSuchFieldException {
+        MockitoAnnotations.openMocks(this);
         // Etant donner les informations d'une commande ayant été saisie par l'utilisateur
-        mockField(inputNoCommande,inputNoLigne,inputNbArticle,listArticles,listActions);
         Article article = mock(Article.class);
 
-        doReturn("123456789").when( (TextField) inputNoCommande.mock).getText();
-        doReturn("1").when( (TextField) inputNoLigne.mock).getText();
-        doReturn("1").when( (TextField) inputNbArticle.mock).getText();
-        doReturn("OC").when( (ComboBox) listActions.mock).getValue();
-        doReturn("42400131 VPort P06-2M60M V1.2.2").when( (ComboBox) listArticles.mock).getValue();
+        doReturn("123456789").when(inputNoCommande).getText();
+        doReturn("1").when(inputNoLigne).getText();
+        doReturn("1").when(inputNbArticle).getText();
+        doReturn("OC").when(listActions).getValue();
+        doReturn("42400131 VPort P06-2M60M V1.2.2").when(listArticles).getValue();
         doReturn("[a-zA-Z]{8}[0-9]{3}").when(article).getFormat();
         // Lors de la saisie de la commande
         controllerTest = spy(controllerTest);
         doReturn(article).when(controllerTest).getSelectedArticle();
 
-        assertNull(controllerTest.getInputNumeroSerie());
-        assertNull(controllerTest.currentCommande);
         controllerTest.commencerSaisie();
         // Alors on attend a ce que l'ihm soit mise à jour pour permettre la saisie des numéros de série
-        verify((TextField) inputNoCommande.mock).setDisable(true);
-        verify((TextField) inputNoLigne.mock).setDisable(true);
-        verify((TextField) inputNbArticle.mock).setDisable(true);
-        verify((ComboBox) listArticles.mock).setDisable(true);
-        verify((ComboBox) listActions.mock).setDisable(true);
-        assertInstanceOf(TextField.class,controllerTest.getInputNumeroSerie());
-        assertNotNull(controllerTest.getInputNumeroSerie());
-        assertInstanceOf(Commande.class,controllerTest.currentCommande);
-        assertNotNull(controllerTest.currentCommande);
+        verify(listArticles).setDisable(true);
+        verify(listActions).setDisable(true);
+        verify(inputNbArticle).setDisable(true);
+        verify(btnCommencerSaisie).setDisable(true);
+        verify(inputNoCommande).setDisable(true);
+        verify(inputNoLigne).setDisable(true);
+        verify(btnAnnulerSaisie).setDisable(false);
+    }
+
+    @Test
+    void commencerSaisieNbNumeroSerieInvalide() throws NoSuchFieldException {
+        MockitoAnnotations.openMocks(this);
+        // Etant donner les informations d'une commande ayant été saisie par l'utilisateur
+        Article article = mock(Article.class);
+
+        doReturn("123456789").when(inputNoCommande).getText();
+        doReturn("1").when(inputNoLigne).getText();
+        doReturn("deux").when(inputNbArticle).getText();
+        doReturn("OC").when(listActions).getValue();
+        doReturn("42400131 VPort P06-2M60M V1.2.2").when(listArticles).getValue();
+        doReturn("[a-zA-Z]{8}[0-9]{3}").when(article).getFormat();
+        // Lors de la saisie de la commande
+        controllerTest = spy(controllerTest);
+        doReturn(article).when(controllerTest).getSelectedArticle();
+
+        controllerTest.commencerSaisie();
+        // Alors on attend a ce que l'ihm soit mise à jour pour permettre la saisie des numéros de série
+        verify(listArticles,never()).setDisable(true);
+        verify(listActions,never()).setDisable(true);
+        verify(inputNbArticle,never()).setDisable(true);
+        verify(btnCommencerSaisie,never()).setDisable(true);
+        verify(btnAnnulerSaisie,never()).setDisable(false);
+        verify(inputNoLigne,never()).setDisable(true);
+        verify(inputNoLigne,never()).setDisable(true);
+        verify(inputNumeroSerieContainer,never()).getChildren();
+        verify(boiteErreur).setText("Le nombre d'article doit être un nombre");
+    }
+
+    @Test
+    void commencerSaisieListArticleVide() throws NoSuchFieldException {
+        MockitoAnnotations.openMocks(this);
+        // Etant donner les informations d'une commande ayant été saisie par l'utilisateur
+        Article article = mock(Article.class);
+
+        doReturn("123456789").when(inputNoCommande).getText();
+        doReturn("1").when(inputNoLigne).getText();
+        doReturn("2").when(inputNbArticle).getText();
+        doReturn("OC").when(listActions).getValue();
+        doReturn("").when(listArticles).getValue();
+        doReturn("[a-zA-Z]{8}[0-9]{3}").when(article).getFormat();
+        ObservableList listArticlesContent = mock(ObservableList.class);
+        doReturn(0).when(listArticlesContent).size();
+        doReturn(listArticlesContent).when(listArticles).getItems();
+        // Lors de la saisie de la commande
+        controllerTest = spy(controllerTest);
+        doReturn(article).when(controllerTest).getSelectedArticle();
+
+        controllerTest.commencerSaisie();
+        // Alors on attend a ce que l'ihm soit mise à jour pour permettre la saisie des numéros de série
+        verify(listArticles,never()).setDisable(true);
+        verify(listActions,never()).setDisable(true);
+        verify(inputNbArticle,never()).setDisable(true);
+        verify(btnCommencerSaisie,never()).setDisable(true);
+        verify(btnAnnulerSaisie,never()).setDisable(false);
+        verify(inputNoLigne,never()).setDisable(true);
+        verify(inputNoLigne,never()).setDisable(true);
+        verify(inputNumeroSerieContainer,never()).getChildren();
+        verify(boiteErreur).setText("Aucun article n'a pus être chargé .");
+    }
+
+    @Test
+    void commencerSaisieListActionVide() throws NoSuchFieldException {
+        MockitoAnnotations.openMocks(this);
+        // Etant donner les informations d'une commande ayant été saisie par l'utilisateur
+        Article article = mock(Article.class);
+
+        doReturn("123456789").when(inputNoCommande).getText();
+        doReturn("1").when(inputNoLigne).getText();
+        doReturn("2").when(inputNbArticle).getText();
+        doReturn("").when(listActions).getValue();
+        doReturn("42400131 VPort P06-2M60M V1.2.2").when(listArticles).getValue();
+        doReturn("[a-zA-Z]{8}[0-9]{3}").when(article).getFormat();
+        ObservableList listArticlesContent = mock(ObservableList.class);
+        doReturn(0).when(listArticlesContent).size();
+        doReturn(listArticlesContent).when(listActions).getItems();
+        // Lors de la saisie de la commande
+        controllerTest = spy(controllerTest);
+        doReturn(article).when(controllerTest).getSelectedArticle();
+
+        controllerTest.commencerSaisie();
+        // Alors on attend a ce que l'ihm soit mise à jour pour permettre la saisie des numéros de série
+        verify(listArticles,never()).setDisable(true);
+        verify(listActions,never()).setDisable(true);
+        verify(inputNbArticle,never()).setDisable(true);
+        verify(btnCommencerSaisie,never()).setDisable(true);
+        verify(btnAnnulerSaisie,never()).setDisable(false);
+        verify(inputNoLigne,never()).setDisable(true);
+        verify(inputNoLigne,never()).setDisable(true);
+        verify(inputNumeroSerieContainer,never()).getChildren();
+        verify(boiteErreur).setText("Il n'y a aucune action renseigner pour cet article .");
+    }
+    @Test
+    void commencerSaisieArticleNonSelectionner() throws NoSuchFieldException {
+        MockitoAnnotations.openMocks(this);
+        // Etant donner les informations d'une commande ayant été saisie par l'utilisateur
+        Article article = mock(Article.class);
+
+        doReturn("123456789").when(inputNoCommande).getText();
+        doReturn("1").when(inputNoLigne).getText();
+        doReturn("1").when(inputNbArticle).getText();
+        doReturn("OC").when(listActions).getValue();
+        doReturn("").when(listArticles).getValue();
+        doReturn("[a-zA-Z]{8}[0-9]{3}").when(article).getFormat();
+        ObservableList listArticlesContent = mock(ObservableList.class);
+        doReturn(1).when(listArticlesContent).size();
+        doReturn("42400131 VPort P06-2M60M V1.2.2").when(listArticlesContent).get(0);
+        doReturn(listArticlesContent).when(listArticles).getItems();
+        // Lors de la saisie de la commande
+        controllerTest = spy(controllerTest);
+        doReturn(article).when(controllerTest).getSelectedArticle();
+
+        controllerTest.commencerSaisie();
+        // Alors on attend a ce que l'ihm soit mise à jour pour permettre la saisie des numéros de série
+        verify(listArticles).setDisable(true);
+        verify(listActions).setDisable(true);
+        verify(inputNbArticle).setDisable(true);
+        verify(btnCommencerSaisie).setDisable(true);
+        verify(inputNoCommande).setDisable(true);
+        verify(inputNoLigne).setDisable(true);
+        verify(btnAnnulerSaisie).setDisable(false);
+        verify(listArticles,atLeast(1)).setValue(anyString());
+    }
+
+    @Test
+    void commencerSaisieActionNonSelectionner() throws NoSuchFieldException {
+        MockitoAnnotations.openMocks(this);
+        // Etant donner les informations d'une commande ayant été saisie par l'utilisateur
+        Article article = mock(Article.class);
+
+        doReturn("123456789").when(inputNoCommande).getText();
+        doReturn("1").when(inputNoLigne).getText();
+        doReturn("1").when(inputNbArticle).getText();
+        doReturn("").when(listActions).getValue();
+        doReturn("42400131 VPort P06-2M60M V1.2.2").when(listArticles).getValue();
+        doReturn("[a-zA-Z]{8}[0-9]{3}").when(article).getFormat();
+        ObservableList listArticlesContent = mock(ObservableList.class);
+        doReturn(1).when(listArticlesContent).size();
+        doReturn("OF").when(listArticlesContent).get(0);
+        doReturn(listArticlesContent).when(listActions).getItems();
+        // Lors de la saisie de la commande
+        controllerTest = spy(controllerTest);
+        doReturn(article).when(controllerTest).getSelectedArticle();
+
+        controllerTest.commencerSaisie();
+        // Alors on attend a ce que l'ihm soit mise à jour pour permettre la saisie des numéros de série
+        verify(listArticles).setDisable(true);
+        verify(listActions).setDisable(true);
+        verify(inputNbArticle).setDisable(true);
+        verify(btnCommencerSaisie).setDisable(true);
+        verify(inputNoCommande).setDisable(true);
+        verify(inputNoLigne).setDisable(true);
+        verify(btnAnnulerSaisie).setDisable(false);
+        verify(listActions,atLeast(1)).setValue(anyString());
+    }
 
 
+    @Test
+    void commencerSaisieNumeroCommandeVide() {
+        // Etant donner les informations d'une commande ayant été saisie par l'utilisateur
+        MockitoAnnotations.openMocks(this);
+        Article article = mock(Article.class);
+        doReturn("").when(inputNoCommande).getText();
+        doReturn("1").when(inputNoLigne).getText();
+        doReturn("1").when(inputNbArticle).getText();
+        doReturn("OC").when(listActions).getValue();
+        doReturn("42400131 VPort P06-2M60M V1.2.2").when(listArticles).getValue();
+        doReturn("[a-zA-Z]{8}[0-9]{3}").when(article).getFormat();
+        // Lors de la saisie de la commande
+        controllerTest.commencerSaisie();
+        // Alors on attend a ce que l'ihm soit mise à jour pour permettre la saisie des numéros de série
+        verify(listArticles,never()).setDisable(true);
+        verify(listActions,never()).setDisable(true);
+        verify(inputNbArticle,never()).setDisable(true);
+        verify(btnCommencerSaisie,never()).setDisable(true);
+        verify(btnAnnulerSaisie,never()).setDisable(false);
+        verify(inputNoLigne,never()).setDisable(true);
+        verify(inputNoLigne,never()).setDisable(true);
+        verify(inputNumeroSerieContainer,never()).getChildren();
 
     }
 
     @Test
-    void changerFichierArticlesTest() {
-        controllerTest.changerFichierArticles();
+    void onRechercheArticle() {
+        MockitoAnnotations.openMocks(this);
+        FxRobot robot = new FxRobot();
+        // Etant donner les informations d'une commande ayant été saisie par l'utilisateur
+        Article article = mock(Article.class);
+        listArticles.setOnKeyPressed(event -> controllerTest.onRechercheArticle(event));
+        assertNotNull(listArticles.getOnKeyPressed());
+        doReturn(primaryScene).when(listArticles).getScene();
+        robot.clickOn(listArticles);
+        robot.press(KeyCode.S);
+        robot.release(KeyCode.S);
 
+        assertEquals("S",mot_recherche_article.toString());
+        robot.press(KeyCode.A);
+        robot.release(KeyCode.A);
+        assertEquals("SA",mot_recherche_article.toString());
+        robot.press(KeyCode.I);
+        robot.release(KeyCode.I);
+        assertEquals("SAI",mot_recherche_article.toString());
+        robot.press(KeyCode.BACK_SPACE);
+        robot.release(KeyCode.BACK_SPACE);
+        assertEquals("SA",mot_recherche_article.toString());
     }
+
+
     @DisplayName("Test de la méthode ajouterNumeroSerie")
     @Test
-    void testSoundError() throws JavaLayerException {
+    void soundError() throws JavaLayerException {
         ControllerSaisie controllerTest = new ControllerSaisie();
         AdvancedPlayer player = new AdvancedPlayer(getClass().getResourceAsStream("/sound/beep-beep-6151.mp3"));
         player.play();
+    }
+    // TODO Tester si quand on clique sur le bouton "Annuler" l'ihm est mise à jour pour permettre la saisie d'une nouvelle commande
+    void TestPopUpMdp() throws NoSuchFieldException {
+        // Etant donner un utilisateur
+        // Lorsqu'il clique sur la liste déroulante des outils de configuration
+
+        // Alors une popup s'affiche pour demander un mot de passe
+
     }
 
 }
