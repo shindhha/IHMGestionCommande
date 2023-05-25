@@ -1,6 +1,7 @@
-import main.java.modeles.Article;
-import main.java.services.Configuration;
+import modeles.Article;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import services.Configuration;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,13 +21,16 @@ class ConfigurationTest {
     * - Url vers une image d'un qr code de configuration pour la scannette
     */
     private Configuration configuration;
-    private static final String path = "C:\\Users\\g.medard\\eclipse-workspace\\IHMGestionCommande\\test\\conf\\";
+    @BeforeEach
+    void setUp() throws IOException {
+        configuration = new Configuration(getClass().getResource("ConfigTest1.csv").getPath());
+    }
     @Test
     void testFileReader() {
 
         // Etant donné un fichier avec les colonnes basique de configuration
 
-        File file = new File(path + "TestRef_articles1.csv");
+        File file = new File(getClass().getResource("articles/configurationArticle.csv").getPath());
         // Lors de la lecture de la première ligne du fichier
         ArrayList<String> header = null;
         try {
@@ -47,7 +51,8 @@ class ConfigurationTest {
     @Test
     void testReadConfigFile() {
         // Etant donné un fichier avec les colonnes basique de configuration et 3 articles renseigner
-        File file = new File(path + "TestRef_articles1.csv");
+        File file = new File(getClass().getResource("articles/configurationArticle.csv").getPath());
+
         // Lors de la lecture de la première ligne du fichier
         HashMap<String, Article> articles = null;
         try {
@@ -56,35 +61,13 @@ class ConfigurationTest {
 
         }
         // Alors on récupère la liste des colonnes disponnible
-        assertEquals(articles.size(), 2);
-        Article arcticle = articles.get("42400150");
-        assertEquals(arcticle.getDesignation(), "DS_Camera Blue Next Network-E4P_FSD-8013-011");
-        assertEquals("1",arcticle.getAttributs().get("QrCode"));
-        assertEquals("C:\\Users\\g.medard\\eclipse-workspace\\IHMGestionCommande\\target\\classes\\main\\resources\\qrcodes/1.png",arcticle.getQrCode());
+        assertEquals(3, articles.size());
+        Article arcticle = articles.get("95006177");
+        assertNotNull(arcticle);
+        assertEquals("CAMERA-DOME-DIRECTIVE-VP-TER",arcticle.getDesignation());
+        assertEquals("autres.png",arcticle.getQrCode());
     }
 
-    @Test
-    void testFile() {
-        // Etant donné un fichier avec les colonnes basique de configuration
-        File file = new File(path + "TestRef_articles1.csv");
-        // Lors de la lecture de la première ligne du fichier
-        ArrayList<String> header = null;
-        HashMap<String,Article> articles = null;
-        Article article = null;
-        try {
-            header = configuration.readHeader(file);
-            articles = configuration.readArticleConfigFile(file);
-            article = articles.get("42400150");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        assertEquals("42400150",article.getAttributs().get("Numero"));
-        assertEquals("DS_Camera Blue Next Network-E4P_FSD-8013-011",article.getAttributs().get("Designation"));
-        assertEquals("cnnnn_nnnn",article.getAttributs().get("Format"));
-        assertEquals("OF",article.getAttributs().get("Actions"));
-        assertEquals("A-26-YB-02",article.getAttributs().get("Emplacement"));
-        assertEquals("1",article.getAttributs().get("QrCode"));
-    }
     @Test
     void TestArticle() {
         // Etant donné un fichier avec la colonne Numero
@@ -99,10 +82,13 @@ class ConfigurationTest {
     }
     @Test
     void writeConfigFile() throws FileNotFoundException {
-        configuration.writeConfigFile(new File(path + "TestConfigFile.csv"),"Fichier1","Fichier2");
-        //String[] paths = FileReader.readConfigFile(new File(path + "TestConfigFile.csv"));
-        //assertEquals("Fichier1",paths[0]);
-        //assertEquals("Fichier2",paths[1]);
+        String path = getClass().getResource("").getPath() + "/ConfigTestTemp.csv";
+        configuration.writeConfigFile(new File(path),"Fichier1","Fichier2","Fichier3","Fichier4");
+        String[] paths = configuration.readConfigFile(new File(path));
+        assertEquals("Fichier1",paths[0]);
+        assertEquals("Fichier2",paths[1]);
+        assertEquals("Fichier3",paths[2]);
+        assertEquals("Fichier4",paths[3]);
     }
 
     @Test

@@ -1,6 +1,9 @@
-package main.java.modeles;
+package modeles;
 
-import main.java.exceptions.FormatInvalideException;
+import exceptions.FormatInvalideException;
+import modeles.Article;
+import modeles.Commande;
+import modeles.OF;
 import org.junit.jupiter.api.Test;
 
 import java.util.regex.Matcher;

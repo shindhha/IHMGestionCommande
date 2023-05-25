@@ -1,6 +1,6 @@
-package main.java.modeles;
+package modeles;
 
-import main.java.exceptions.FormatInvalideException;
+import exceptions.FormatInvalideException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -16,7 +16,7 @@ public abstract class Commande {
     protected ArrayList<String> listNumeroSerie;
 
     private Pattern pattern;
-    public abstract void makeOutPutFile() throws IOException;
+    public abstract void makeOutPutFile(String pathOutPutFolder) throws IOException;
 
     public Commande(String numero, Article article, int quantiteMax, String ligne) {
         if (ligne.isEmpty()) throw new IllegalStateException("Veuillez saisir le numéro de ligne .");

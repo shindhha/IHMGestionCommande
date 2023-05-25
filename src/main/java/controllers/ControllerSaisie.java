@@ -1,4 +1,4 @@
-package main.java.controllers;
+package controllers;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.advanced.AdvancedPlayer;
 import javafx.fxml.FXML;
@@ -19,15 +19,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import main.Launch;
-import main.java.exceptions.FormatInvalideException;
-import main.java.modeles.Article;
-import main.java.modeles.Commande;
-import main.java.modeles.OC;
-import main.java.modeles.OF;
-import main.java.services.Configuration;
+import exceptions.FormatInvalideException;
+import modeles.Article;
+import modeles.Commande;
+import modeles.OC;
+import modeles.OF;
+import services.Configuration;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.net.URL;
@@ -64,12 +62,16 @@ public class ControllerSaisie implements Initializable {
     private ImageView qrCodeView;
     @FXML
     private TextField inputNoLigne;
+    @FXML
+    private MenuButton outilsConfig;
     private Scene primaryScene;
     private TextField inputNumeroSerie;
     private HashMap<String,Article> articles;
     public Commande currentCommande;
+    private AdvancedPlayer soundPlayer;
 
     private Configuration config;
+    public static final String nombreMaxArticleDefaut = "1";
 
 
     // Mot entrer par l'utilisateur pour la recherche d'un produit dans la liste.
@@ -77,6 +79,7 @@ public class ControllerSaisie implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        outilsConfig.setOnMouseClicked(event -> popUpMdp());
         mot_recherche_article = new StringBuilder();
         try {
             config = new Configuration();
@@ -86,7 +89,36 @@ public class ControllerSaisie implements Initializable {
             e.printStackTrace();
         }
     }
+
+    public void popUpMdp() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Mot de passe");
+        alert.setHeaderText("Veuillez entrer le mot de passe");
+        alert.setContentText("Mot de passe : ");
+        TextField textField = new TextField();
+        textField.setPromptText("Mot de passe");
+        alert.getDialogPane().setContent(textField);
+        alert.showAndWait();
+        if (alert.getResult() == ButtonType.OK) {
+            if (isMdpCorrect(textField.getText())) {
+                alert.close();
+                outilsConfig.show();
+            } else {
+                alert.close();
+                popUpMdp();
+            }
+        } else {
+            alert.close();
+        }
+    }
+
+    public boolean isMdpCorrect(String mdp) {
+        return mdp.equals("0000");
+    }
     public ControllerSaisie() {
+    }
+    public ControllerSaisie(AdvancedPlayer player) {
+        this.soundPlayer = player;
     }
     public ControllerSaisie(TextField inputNumeroSerie, Text compteurNbProduitSaisie) {
         this.compteurNbProduitSaisie = compteurNbProduitSaisie;
@@ -106,23 +138,7 @@ public class ControllerSaisie implements Initializable {
         this.currentCommande = currentCommande;
     }
 
-    public ControllerSaisie(TextField inputNoCommande,
-                            TextField inputNoLigne ,
-                            TextField inputNbArticle ,
-                            ComboBox<String> listArticles ,
-                            ComboBox<String> listActions) {
-        this.inputNoCommande = inputNoCommande;
-        this.inputNoLigne = inputNoLigne;
-        this.inputNbArticle = inputNbArticle;
-        this.listArticles = listArticles;
-        this.listActions = listActions;
-        this.inputNumeroSerieContainer = new VBox();
-        this.btnTerminerSaisie = new Button();
-        this.btnCommencerSaisie = new Button();
-        this.btnAnnulerSaisie = new Button();
-        this.primaryScene = new Scene(new HBox());
 
-    }
 
 
 
@@ -226,10 +242,30 @@ public class ControllerSaisie implements Initializable {
             button.setOnAction(event -> onDeleteProduit(hbox, finalNumeroSerie));
             listProduitsSaisie.getChildren().add(hbox);
             updateCompteur(currentCommande.size());
+            playSound(true);
         } catch (FormatInvalideException | IllegalStateException e) {
             boiteErreur.setText(e.getMessage());
+            playSound(false);
         } finally {
             inputNumeroSerie.clear();
+        }
+    }
+
+    private void playSound(boolean isOk) {
+        if (isOk) {
+            try {
+                soundPlayer = new AdvancedPlayer(getClass().getResourceAsStream("/sound/correct.mp3"));
+                soundPlayer.play();
+            } catch (JavaLayerException ex) {
+                boiteErreur.setText("Erreur lors de la lecture du son");
+            }
+        } else {
+            try {
+                soundPlayer = new AdvancedPlayer(getClass().getResourceAsStream("/sound/incorrect.mp3"));
+                soundPlayer.play();
+            } catch (JavaLayerException ex) {
+                boiteErreur.setText("Erreur lors de la lecture du son");
+            }
         }
     }
 
@@ -281,12 +317,7 @@ public class ControllerSaisie implements Initializable {
      * pour afficher le message d'erreur dans la boite d'erreur.
      */
     public void onSaisieNumeroSerie(KeyEvent event) {
-        AdvancedPlayer player = null;
-        try {
-            player = new AdvancedPlayer(Launch.class.getResourceAsStream("sound/beep-beep-6151.mp3"));
-        } catch (JavaLayerException e) {
-            e.printStackTrace();
-        }
+
         try {
             if (event.getCode() == KeyCode.DOWN) {
                 inputNumeroSerie.requestFocus();
@@ -295,11 +326,7 @@ public class ControllerSaisie implements Initializable {
             }
         } catch (IllegalStateException e) {
             boiteErreur.setText(e.getMessage());
-            try {
-                player.play();
-            } catch (JavaLayerException ex) {
-                boiteErreur.setText("Erreur lors de la lecture du son");
-            }
+
         }
     }
 
@@ -310,7 +337,7 @@ public class ControllerSaisie implements Initializable {
      *                               pour le définir par défaut.
      */
     private Commande makeCommande(String type) throws IllegalStateException {
-        if (inputNbArticle.getText().isEmpty() || Integer.parseInt(inputNbArticle.getText()) <= 0) inputNbArticle.setText(Launch.nombreMaxArticleDefaut);
+        if (inputNbArticle.getText().isEmpty() || Integer.parseInt(inputNbArticle.getText()) <= 0) inputNbArticle.setText(nombreMaxArticleDefaut);
         if (listArticles.getValue() == null || listArticles.getValue().isEmpty()) {
             if (listArticles.getItems().size() > 0)
                 listArticles.setValue(listArticles.getItems().get(0));
@@ -362,7 +389,7 @@ public class ControllerSaisie implements Initializable {
      */
     public void makeOutputFile()  {
         try {
-            currentCommande.makeOutPutFile();
+            currentCommande.makeOutPutFile(config.pathOutPutFolder);
             setDefaultIHMState();
             copyFileNameToClipBoard();
         } catch (IOException e) {

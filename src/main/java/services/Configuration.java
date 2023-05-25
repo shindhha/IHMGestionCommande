@@ -1,8 +1,7 @@
-package main.java.services;
+package services;
 
 
-import main.Launch;
-import main.java.modeles.Article;
+import modeles.Article;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,20 +26,26 @@ public class Configuration {
     private File configurationFile;
 
 
-    public Configuration(String pathConfiguration) {
+    public Configuration(String pathConfiguration) throws FileNotFoundException {
         this.pathConfiguration = pathConfiguration;
+        configurationFile = new File(pathConfiguration);
+        readConfigFile(configurationFile);
     }
 
     public Configuration() throws IOException {
+        // On récupère le chemin de configuration dans le système pour l'utilisateur courant.
         Path pathPrograms = Path.of(System.getProperty("user.home"));
+        // On crée le chemin vers le dossier de configuration de l'application.
         pathConfiguration = pathPrograms + "/" + applicationName;
         Files.createDirectories(pathPrograms.resolve(pathConfiguration));
         configurationFile = new File(pathConfiguration + "/" + configFileName);
-
+        // Si aucune configuration n'est trouvable dans le système.
         if (!configurationFile.exists())
         {
-            Files.copy(Launch.class.getResourceAsStream(defaultPathConfiguration), Path.of(configurationFile.getPath()));
+            // On copie la configuration par défaut dans le système.
+            Files.copy(getClass().getResourceAsStream(defaultPathConfiguration), Path.of(configurationFile.getPath()));
         }
+        // On lit le fichier de configuration.
         readConfigFile(configurationFile);
     }
 
@@ -91,7 +96,7 @@ public class Configuration {
         return readArticleConfigFile(new File(listArticleConfiguration));
     }
 
-    public String[] readConfigFile(File file) throws FileNotFoundException {
+    public String[] readConfigFile(File file) throws FileNotFoundException , ArrayIndexOutOfBoundsException {
         Scanner scanner = new Scanner(file);
         String line = scanner.nextLine();
         String[] params = line.split(";");

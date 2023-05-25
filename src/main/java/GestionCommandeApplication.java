@@ -1,11 +1,10 @@
-package main.java;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import main.Launch;
-import main.java.controllers.ControllerSaisie;
+
+import controllers.ControllerSaisie;
 
 import java.io.IOException;
 
@@ -13,7 +12,7 @@ public class GestionCommandeApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Launch.class.getResource("resources/views/vue.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/vue.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Gestions Commandes");
         stage.setScene(scene);

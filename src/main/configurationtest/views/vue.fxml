@@ -24,19 +24,15 @@
             <Tooltip text="Empty Tooltip" />
          </tooltip>
          <items>
-            <MenuButton mnemonicParsing="false" text="Outils Presse Papier">
+            <MenuButton mnemonicParsing="false" text="Outils">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#copyFileNameToClipBoard" text="Copier le nom du fichier de la commande" />
                 <MenuItem mnemonicParsing="false" onAction="#copyOutPutFolderNameToClipBoard" text="Copier le chemin du répertoire de sortie" />
+                  <MenuItem mnemonicParsing="false" onAction="#changerRepertoireSortie" text="Changer le répertoire de sortie" />
+                  <MenuItem mnemonicParsing="false" onAction="#changerFichierArticles" text="Changer la liste des articles" />
+                  <MenuItem mnemonicParsing="false" onAction="#loadQrCodes" text="Charger les Qr Codes" />
+                  <MenuItem mnemonicParsing="false" onAction="#loadDocumentation" text="Charger la documentation" />
               </items>
-            </MenuButton>
-            <MenuButton fx:id="outilsConfig" mnemonicParsing="false" text="Outils Configuration">
-               <items>
-                  <MenuItem mnemonicParsing="false" onAction="#loadDocumentation" text="Sélectionner la documentation" />
-                  <MenuItem mnemonicParsing="false" onAction="#loadQrCodes" text="Sélectionner la listes des QrCodes" />
-                  <MenuItem mnemonicParsing="false" onAction="#changerFichierArticles" text="Sélectionner la liste des articles" />
-                  <MenuItem mnemonicParsing="false" onAction="#changerRepertoireSortie" text="Sélectionner le répertoire de sortie" />
-               </items>
             </MenuButton>
             <Button mnemonicParsing="false" onAction="#afficherDocumentation" text="Aide" />
          </items>

@@ -1,7 +1,6 @@
-package main.java.modeles;
+package modeles;
 
-import main.Launch;
-import main.java.GestionCommandeApplication;
+
 
 import java.io.File;
 import java.io.FileWriter;
@@ -18,8 +17,8 @@ public class OC extends Commande {
     }
 
     @Override
-    public void makeOutPutFile() throws IOException {
-        File outputFile = new File(Launch.pathOutPutFolder + getFileOutPutName());
+    public void makeOutPutFile(String pathOutPutFolder) throws IOException {
+        File outputFile = new File(pathOutPutFolder + getFileOutPutName());
         FileWriter fileWriter = new FileWriter(outputFile);
         fileWriter.write("Article : " + article.getDesignation() + ";");
         fileWriter.write("Numéro de commande : " + numero + ";");

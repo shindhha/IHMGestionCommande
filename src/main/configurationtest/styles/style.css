@@ -1,0 +1,26 @@
+.btn {
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 10;
+}
+
+.list {
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 10;
+}
+
+.textField {
+
+}
+
+.body {
+
+
+}
+
+.error_message {
+    -fx-fill: red;
+}
