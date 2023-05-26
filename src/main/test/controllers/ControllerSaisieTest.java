@@ -10,6 +10,7 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -17,14 +18,17 @@ import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.advanced.AdvancedPlayer;
 import modeles.Article;
 import modeles.Commande;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.osgi.service.TestFx;
+import services.Configuration;
 
 import java.awt.*;
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -67,7 +71,8 @@ class ControllerSaisieTest extends ApplicationTest {
     @Spy
     private StringBuilder mot_recherche_article;
     private Scene primaryScene;
-
+    @Mock
+    private Configuration config;
 
     @InjectMocks
     private ControllerSaisie controllerTest;
@@ -429,20 +434,44 @@ class ControllerSaisieTest extends ApplicationTest {
         listArticles.setOnKeyPressed(event -> controllerTest.onRechercheArticle(event));
         assertNotNull(listArticles.getOnKeyPressed());
         doReturn(primaryScene).when(listArticles).getScene();
-        robot.clickOn(listArticles);
+        clickOn("#listArticles");
         robot.press(KeyCode.S);
         robot.release(KeyCode.S);
 
-        assertEquals("S",mot_recherche_article.toString());
+        assertEquals("s",mot_recherche_article.toString());
         robot.press(KeyCode.A);
         robot.release(KeyCode.A);
-        assertEquals("SA",mot_recherche_article.toString());
-        robot.press(KeyCode.I);
-        robot.release(KeyCode.I);
-        assertEquals("SAI",mot_recherche_article.toString());
+        assertEquals("sa",mot_recherche_article.toString());
+        robot.press(KeyCode.NUMPAD1);
+        robot.release(KeyCode.NUMPAD1);
+        assertEquals("sa1",mot_recherche_article.toString());
         robot.press(KeyCode.BACK_SPACE);
         robot.release(KeyCode.BACK_SPACE);
-        assertEquals("SA",mot_recherche_article.toString());
+        assertEquals("sa",mot_recherche_article.toString());
+        robot.press(KeyCode.BACK_SPACE);
+        robot.release(KeyCode.BACK_SPACE);
+        robot.press(KeyCode.BACK_SPACE);
+        robot.release(KeyCode.BACK_SPACE);
+        assertEquals("",mot_recherche_article.toString());
+        verify(listArticles).setPromptText("Sélectionner l'article générique");
+    }
+    @Disabled
+    @Test
+    void useArticle() {
+        MockitoAnnotations.openMocks(this);
+        Article article = mock(Article.class);
+        ObservableList listActions = mock(ObservableList.class);
+        doReturn("autres.png").when(article).getQrCode();
+        doReturn("42400131 VPort P06-2M60M V1.2.2").when(article).toString();
+        doReturn(new String[]{"OC","OF"}).when(article).getActions();
+        config.pathQrCodes = getClass().getResource("../qrcodes/").getPath();
+        File file = new File(getClass().getResource("../qrcodes/").getPath());
+        for (File f : file.listFiles()) {
+            System.out.println(f.getName());
+        }
+        controllerTest.useArticle(article);
+        verify(listArticles).setValue("42400131 VPort P06-2M60M V1.2.2");
+
     }
 
 
@@ -453,12 +482,49 @@ class ControllerSaisieTest extends ApplicationTest {
         AdvancedPlayer player = new AdvancedPlayer(getClass().getResourceAsStream("/sound/beep-beep-6151.mp3"));
         player.play();
     }
-    // TODO Tester si quand on clique sur le bouton "Annuler" l'ihm est mise à jour pour permettre la saisie d'une nouvelle commande
     void TestPopUpMdp() throws NoSuchFieldException {
         // Etant donner un utilisateur
+
         // Lorsqu'il clique sur la liste déroulante des outils de configuration
 
         // Alors une popup s'affiche pour demander un mot de passe
+
+    }
+    @Test
+    void setDefaultStateIHM() {
+        MockitoAnnotations.openMocks(this);
+        Commande commande = mock(Commande.class);
+        controllerTest.currentCommande = commande;
+        controllerTest.setDefaultIHMState();
+        verify(listArticles).setDisable(false);
+        verify(listActions).setDisable(false);
+        verify(inputNbArticle).setDisable(false);
+        verify(btnCommencerSaisie).setDisable(false);
+        verify(btnAnnulerSaisie).setDisable(true);
+        verify(inputNoCommande).setDisable(false);
+        verify(inputNoLigne).setDisable(false);
+        verify(commande).clear();
+        verify(compteurNbProduitSaisie).setText("");
+    }
+    @Test
+    void onDeleteProduit() {
+        MockitoAnnotations.openMocks(this);
+
+        HBox hBox = new HBox();
+        Commande commande = mock(Commande.class);
+        doNothing().when(commande).remove(anyString());
+        ObservableList listProduits = mock(ObservableList.class);
+        doReturn(listProduits).when(listProduitsSaisie).getChildren();
+        doReturn(1).when(commande).size();
+        doReturn(50).when(commande).getNbMaxNumeroSerie();
+        controllerTest.currentCommande = commande;
+        controllerTest = spy(controllerTest);
+        Button button = new Button();
+        button.setOnAction(event -> controllerTest.onDeleteProduit(hBox,""));
+        button.fire();
+        verify(commande).remove(anyString());
+        verify(listProduits).remove(any(HBox.class));
+        verify(compteurNbProduitSaisie).setText("1/50");
 
     }
 

@@ -29,8 +29,8 @@ import services.Configuration;
 import java.awt.*;
 import java.io.*;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class ControllerSaisie implements Initializable {
@@ -138,7 +138,6 @@ public class ControllerSaisie implements Initializable {
      * qui est ensuite utilisé pour filtrer les articles et ne garder que ceux qui contiennent le mot
      * @param event : KeyEvent permet de récupérer la touche presser
      */
-    // TODO : A tester
     public void onRechercheArticle(KeyEvent event) {
 
         // Si on appuie sur la touche backspace, on supprime le dernier caractère de la recherche
@@ -163,9 +162,14 @@ public class ControllerSaisie implements Initializable {
      */
     public void printArticle(HashMap<String,Article> articles) {
         listArticles.getItems().clear();
+        List<String> articlesString = new ArrayList<>();
         for (Article article : articles.values()) {
-            listArticles.getItems().add(article.toString());
+            articlesString.add(article.toString());
+
         }
+        Collections.sort(articlesString);
+        articlesString.forEach(article -> listArticles.getItems().add(article));
+
     }
 
     /**
@@ -190,7 +194,6 @@ public class ControllerSaisie implements Initializable {
      * affiche le qr code permettant de configurer la scanette pour l'article sélectionné.
      * @param selectedArticle : article sélectionné dans la liste déroulante.
      */
-    // TODO : A tester
     public void useArticle(Article selectedArticle) {
         inputNumeroSerieContainer.getChildren().clear();
         listActions.getItems().clear();
@@ -253,7 +256,6 @@ public class ControllerSaisie implements Initializable {
      * @param hbox : HBox qui contient le label et le bouton de suppression du numéro de série
      * @param aSupprimer : numéro de série du produit à supprimer.
      */
-    // TODO : A tester
     public void onDeleteProduit(HBox hbox,String aSupprimer) {
         listProduitsSaisie.getChildren().remove(hbox);
         currentCommande.remove(aSupprimer);
@@ -269,7 +271,6 @@ public class ControllerSaisie implements Initializable {
      *  Ajoute un listener sur toute la scene qui écoute les touches du clavier pour verifier le format des numéros de série
      *  Si une erreur est détecté, son message est affiché dans la boite d'erreur
      */
-    // TODO : A tester
     public void commencerSaisie() {
 
         try {
@@ -281,7 +282,7 @@ public class ControllerSaisie implements Initializable {
             inputNumeroSerieContainer.getChildren().add(inputNumeroSerie);
             disableChamp(listArticles, listActions, inputNbArticle, btnCommencerSaisie, inputNoCommande,inputNoLigne);
             btnAnnulerSaisie.setDisable(false);
-            primaryScene.setOnKeyPressed(event -> onSaisieNumeroSerie(event));
+            primaryScene.setOnKeyReleased(event -> onSaisieNumeroSerie(event));
 
         } catch (NumberFormatException e) {
             boiteErreur.setText("Le nombre d'article doit être un nombre");
@@ -349,7 +350,6 @@ public class ControllerSaisie implements Initializable {
      * Désactive le champ de saisie du numéro de série, le bouton annuler la saisie.
      * Vide la liste des numéros de série
      */
-    // TODO : A tester
     public void setDefaultIHMState() {
         primaryScene.setOnKeyReleased(null);
         listProduitsSaisie.getChildren().clear();
@@ -382,7 +382,8 @@ public class ControllerSaisie implements Initializable {
      * Met à jour l'interface graphique pour indiquer à l'utilisateur le nombre d'article qu'il a saisi.
      */
     public void updateCompteur(int nbArticleSaisie) {
-        compteurNbProduitSaisie.setText(nbArticleSaisie + "/" + currentCommande.getNbMaxNumeroSerie());
+        if (currentCommande.size() == 0) compteurNbProduitSaisie.setText("");
+        else compteurNbProduitSaisie.setText(nbArticleSaisie + "/" + currentCommande.getNbMaxNumeroSerie());
         if (nbArticleSaisie == currentCommande.getNbMaxNumeroSerie()) {
             btnTerminerSaisie.setDisable(false);
         }
@@ -468,7 +469,6 @@ public class ControllerSaisie implements Initializable {
     /**
      * @return Article articles L'article sélectionné par l'utilisateur dans la liste des articles
      */
-    // TODO : A tester
     public Article getSelectedArticle() {
         String articleSelectionner = listArticles.getValue();
         String numero = articleSelectionner.split(" ")[0];
