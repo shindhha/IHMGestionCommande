@@ -20,7 +20,7 @@ public class Configuration {
     public String listArticleConfiguration;
     public String pathOutPutFolder;
     private String pathConfiguration;
-    private final String defaultPathConfiguration = "resources/config/configurationPath.csv";
+    private final String defaultPathConfiguration = "/config/configurationPath.csv";
     private final String applicationName = "IHMGestionCommande";
     private final String configFileName = "configuration.csv";
     private File configurationFile;
@@ -46,7 +46,13 @@ public class Configuration {
             Files.copy(getClass().getResourceAsStream(defaultPathConfiguration), Path.of(configurationFile.getPath()));
         }
         // On lit le fichier de configuration.
-        readConfigFile(configurationFile);
+        try {
+            readConfigFile(configurationFile);
+        } catch (FileNotFoundException e) {
+
+        } catch (ArrayIndexOutOfBoundsException e) {
+
+        }
     }
 
 

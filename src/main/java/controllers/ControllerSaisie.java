@@ -89,7 +89,6 @@ public class ControllerSaisie implements Initializable {
             e.printStackTrace();
         }
     }
-    // TODO : A tester
     public void popUpMdp() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Mot de passe");
@@ -163,10 +162,7 @@ public class ControllerSaisie implements Initializable {
     public void printArticle(HashMap<String,Article> articles) {
         listArticles.getItems().clear();
         List<String> articlesString = new ArrayList<>();
-        for (Article article : articles.values()) {
-            articlesString.add(article.toString());
-
-        }
+        articles.values().forEach(article -> articlesString.add(article.toString()));
         Collections.sort(articlesString);
         articlesString.forEach(article -> listArticles.getItems().add(article));
 
@@ -384,9 +380,9 @@ public class ControllerSaisie implements Initializable {
     public void updateCompteur(int nbArticleSaisie) {
         if (currentCommande.size() == 0) compteurNbProduitSaisie.setText("");
         else compteurNbProduitSaisie.setText(nbArticleSaisie + "/" + currentCommande.getNbMaxNumeroSerie());
-        if (nbArticleSaisie == currentCommande.getNbMaxNumeroSerie()) {
-            btnTerminerSaisie.setDisable(false);
-        }
+        if (nbArticleSaisie == currentCommande.getNbMaxNumeroSerie()) btnTerminerSaisie.setDisable(false);
+        else if (btnCommencerSaisie.isDisable()) btnTerminerSaisie.setDisable(true);
+
 
     }
 

@@ -62,7 +62,7 @@
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Numéro Commande/Traitement :" />
                         <TextField fx:id="inputNoCommande" promptText="Entrez le numéro de la commande :" styleClass="textField" />
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Numéro de ligne :" />
-                        <TextField fx:id="inputNoLigne" promptText="Entrez le numéro de la commande :" styleClass="textField" />
+                        <TextField fx:id="inputNoLigne" promptText="Entrez le numéro de ligne :" styleClass="textField" />
                         <ComboBox fx:id="listArticles" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="406.0" promptText="Sélectionner l'article générique">
                            <VBox.margin>
                               <Insets top="10.0" />
