@@ -20,10 +20,7 @@ import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import exceptions.FormatInvalideException;
-import modeles.Article;
-import modeles.Commande;
-import modeles.OC;
-import modeles.OF;
+import modeles.*;
 import services.Configuration;
 
 import java.awt.*;
@@ -88,6 +85,7 @@ public class ControllerSaisie implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
     public void popUpMdp() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -127,6 +125,7 @@ public class ControllerSaisie implements Initializable {
         listArticles.setOnKeyPressed(event -> onRechercheArticle(event));
         loadArticle();
         listArticles.setOnAction(event -> useArticle(getSelectedArticle()));
+        setDefaultIHMState();
     }
 
 
@@ -323,20 +322,12 @@ public class ControllerSaisie implements Initializable {
                 listActions.setValue(listActions.getItems().get(0));
             else throw new IllegalStateException("Il n'y a aucune action renseigner pour cet article .");
         }
+        CommandeFactory factory = new CommandeFactory(inputNoCommande.getText(),
+                getSelectedArticle(),
+                Integer.parseInt(inputNbArticle.getText()),
+                inputNoLigne.getText());
 
-
-        Commande commande = null;
-        String noCommande = inputNoCommande.getText();
-        String noLigne = inputNoLigne.getText();
-        int nbArticle = Integer.parseInt(inputNbArticle.getText());
-        Article article = getSelectedArticle();
-        if (type.equalsIgnoreCase("OF")) {
-            commande = new OF(noCommande, article, nbArticle,noLigne);
-        }
-        if (type.equalsIgnoreCase("OC")) {
-            commande = new OC(noCommande, article, nbArticle,noLigne);
-        }
-        return commande;
+        return factory.createCommande(type);
     }
 
     /**
@@ -351,7 +342,6 @@ public class ControllerSaisie implements Initializable {
         listProduitsSaisie.getChildren().clear();
         enableChamp(listArticles, listActions, inputNbArticle, btnCommencerSaisie, inputNoCommande,inputNoLigne);
         disableChamp(btnTerminerSaisie, btnAnnulerSaisie);
-        currentCommande.clear();
         inputNumeroSerieContainer.getChildren().clear();
         updateCompteur(0);
     }
@@ -464,8 +454,10 @@ public class ControllerSaisie implements Initializable {
 
     /**
      * @return Article articles L'article sélectionné par l'utilisateur dans la liste des articles
+     * @throws NullPointerException Si aucun article n'est sélectionné
      */
-    public Article getSelectedArticle() {
+    public Article getSelectedArticle() throws NullPointerException {
+
         String articleSelectionner = listArticles.getValue();
         String numero = articleSelectionner.split(" ")[0];
         return articles.get(numero);
