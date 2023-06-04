@@ -76,6 +76,7 @@ public class ControllerSaisie implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         outilsConfig.setOnMouseClicked(event -> popUpMdp());
         mot_recherche_article = new StringBuilder();
         try {
@@ -125,7 +126,8 @@ public class ControllerSaisie implements Initializable {
         listArticles.setOnKeyPressed(event -> onRechercheArticle(event));
         loadArticle();
         listArticles.setOnAction(event -> useArticle(getSelectedArticle()));
-        setDefaultIHMState();
+        enableChamp(listArticles, listActions, inputNbArticle, btnCommencerSaisie, inputNoCommande,inputNoLigne);
+        disableChamp(btnTerminerSaisie, btnAnnulerSaisie);
     }
 
 

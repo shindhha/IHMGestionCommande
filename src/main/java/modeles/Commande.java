@@ -54,4 +54,5 @@ public abstract class Commande {
         listNumeroSerie.clear();
     }
     public abstract String getFileOutPutName();
+
 }
