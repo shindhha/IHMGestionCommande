@@ -29,7 +29,7 @@ class CommandeTest {
         Article article = mock(Article.class);
         doReturn("^[a-zA-Z]{5}[0-9]{7}$").when(article).getFormat();
         doReturn(numero).when(article).getNumero();
-        Commande currentCommande = new OF("A-26-YB-02",article,50,"5");
+        Commande currentCommande = new OF("11122233_666",article,50,"5");
         currentCommande.ajouterNumeroSerie(numero);
         // On attend qu'une erreur soit propagée lors de l'ajout du numéro de série
         Exception e = assertThrowsExactly(IllegalStateException.class,() -> currentCommande.ajouterNumeroSerie(numero));
@@ -44,7 +44,7 @@ class CommandeTest {
         Article article = mock(Article.class);
         doReturn("^[a-zA-Z]{5}[0-9]{7}$").when(article).getFormat();
         doReturn(numero).when(article).getNumero();
-        Commande currentCommande = new OF("A-26-YB-02",article,1,"5");
+        Commande currentCommande = new OF("11122233_666",article,1,"5");
         currentCommande.ajouterNumeroSerie(numero);
         // On attend qu'une erreur soit propagée lors de l'ajout du numéro de série
         Exception e = assertThrowsExactly(IllegalStateException.class,() -> currentCommande.ajouterNumeroSerie(numero));
@@ -58,7 +58,7 @@ class CommandeTest {
         String numero = "TBAKE10379";
         Article article = mock(Article.class);
         doReturn("^[a-zA-Z]{5}[0-9]{7}$").when(article).getFormat();
-        Commande currentCommande = new OF("A-26-YB-02",article,1,"5");
+        Commande currentCommande = new OF("11122233_666",article,1,"5");
         // On attend qu'une erreur soit propagée lors de l'ajout du numéro de série
         Exception e = assertThrowsExactly(FormatInvalideException.class,() -> currentCommande.ajouterNumeroSerie(numero));
         assertEquals(e.getMessage() , "Le format du numéro de série est invalide !");
@@ -71,7 +71,7 @@ class CommandeTest {
         Article article = mock(Article.class);
         doReturn("\\d").when(article).getFormat();
         doReturn("960000").when(article).getNumero();
-        Commande currentCommande = new OF("A-26-YB-02",article,5,"5");
+        Commande currentCommande = new OF("11122233_666",article,5,"5");
         currentCommande.ajouterNumeroSerie("1");
         currentCommande.ajouterNumeroSerie("2");
         currentCommande.ajouterNumeroSerie("3");
@@ -81,17 +81,17 @@ class CommandeTest {
 
         currentCommande.makeOutPutFile(getClass().getResource("../output/").getPath());
         // Alors on s'attend a ce qu'un fichier soit créer et nommer de la façon suivante :
-        assertEquals("OF-A-26-YB-02-5L-960000-5.csv",currentCommande.getFileOutPutName());
+        assertEquals("OF-11122233_666-5L-960000-5.csv",currentCommande.getFileOutPutName());
         // OF-<numero de l'OF>-<Numéro de la ligne>L-<Numéro de l'article>-<quantite>.csv
         File file = new File(getClass().getResource("../output/").getPath() + currentCommande.getFileOutPutName());
         Scanner fileReader = new Scanner(file);
         // Que sa première ligne soit au format suivant :
         // Numéro de commande; Numéro de ligne;Article;Quantite;Nom d'utilisateur du compte
-        assertEquals("Numéro de commande : A-26-YB-02;Numéro de ligne : 5;Article : null;Quantité : 5;Personne ayant éffectué la commande : " + System.getProperty("user.name"),fileReader.nextLine());
+        assertEquals("Numéro de commande : 11122233_666;Numéro de ligne : 5;Article : null;Quantité : 5;Personne ayant éffectué la commande : " + System.getProperty("user.name"),fileReader.nextLine());
         // Et que les lignes suivantes soient au format suivant :
         // Numéro de traitement;Numéro de série
         for (int i = 1; i <= 5; i++) {
-            assertEquals("A-26-YB-02" + ";"+ i,fileReader.nextLine());
+            assertEquals("11122233_666" + ";"+ i,fileReader.nextLine());
         }
     }
     // Attention : lorque l'on appelle getNumero() sur le mock de l'article, il retourne null
@@ -102,7 +102,7 @@ class CommandeTest {
         Article article = mock(Article.class);
         doReturn("\\d").when(article).getFormat();
         doReturn("960000").when(article).getNumero();
-        Commande currentCommande = new OC("A-26-YB-02",article,5,"5");
+        Commande currentCommande = new OC("OC11122233",article,5,"5");
         currentCommande.ajouterNumeroSerie("1");
         currentCommande.ajouterNumeroSerie("2");
         currentCommande.ajouterNumeroSerie("3");
@@ -112,13 +112,13 @@ class CommandeTest {
 
         currentCommande.makeOutPutFile(getClass().getResource("../output/").getPath());
         // Alors on s'attend a ce qu'un fichier soit créer et nommer de la façon suivante :
-        assertEquals("OC-A-26-YB-02-5L-960000-5.csv",currentCommande.getFileOutPutName());
+        assertEquals("OC-OC11122233-5L-960000-5.csv",currentCommande.getFileOutPutName());
         // OC-<numero de l'OC>-<Numéro de la ligne>L-<Numéro de l'article>-<quantite>.csv
         File file = new File(getClass().getResource("../output/").getPath() + currentCommande.getFileOutPutName());
         Scanner fileReader = new Scanner(file);
         // Que sa première ligne soit au format suivant :
         // Numéro de commande; Numéro de ligne;Article;Quantite;Nom d'utilisateur du compte
-        assertEquals("Numéro de commande : A-26-YB-02;Numéro de ligne : 5;Article : null;Quantité : 5;Personne ayant éffectué la commande : " + System.getProperty("user.name"),fileReader.nextLine());
+        assertEquals("Numéro de commande : OC11122233;Numéro de ligne : 5;Article : null;Quantité : 5;Personne ayant éffectué la commande : " + System.getProperty("user.name"),fileReader.nextLine());
         // Et que les lignes suivantes soient au format suivant :
         // Numéro de série
         for (int i = 1; i <= 5; i++) {

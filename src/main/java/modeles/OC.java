@@ -7,8 +7,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class OC extends Commande {
-    public OC(String numero, Article article, int quantiteMax, String ligne) {
+    public OC(String numero, Article article, int quantiteMax, String ligne)throws IllegalArgumentException {
         super(numero, article, quantiteMax, ligne);
+        if (numero.matches("[0-9]{8}_[0-9]{3}")) throw new IllegalArgumentException("Format du numéro de commande incohérent avec le choix de l'action");
+        if (!numero.matches("OC[0-9]{8}")) throw new IllegalArgumentException("Le numéro de commande doit être de la forme OCXXXXXXXX");
+
     }
 
     @Override

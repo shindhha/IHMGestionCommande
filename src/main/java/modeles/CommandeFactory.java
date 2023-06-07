@@ -12,8 +12,8 @@ public class CommandeFactory {
         this.noLigne = ligne;
     }
     public Commande createCommande(String type) {
-        if (type.equals("OF")) return new OF(noCommande, article, nbArticle, noLigne);
-        else if (type.equals("OC")) return new OC(noCommande, article, nbArticle, noLigne);
-        else return null;
+        if (type.equals("Ordre de Fabrication")) return new OF(noCommande, article, nbArticle, noLigne);
+        else if (type.equals("Ordre de Commande")) return new OC(noCommande, article, nbArticle, noLigne);
+        else throw new IllegalArgumentException("Le type de commande n'est pas reconnu");
     }
 }

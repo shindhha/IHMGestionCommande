@@ -6,10 +6,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class OF extends Commande {
-    private Article article;
     public OF(String numero, Article article, int quantiteMax, String ligne) {
         super(numero, article, quantiteMax, ligne);
-        this.article = article;
+        if (numero.matches("OC[0-9]{8}")) throw new IllegalArgumentException("Format du numéro de traitement incohérent avec le choix de l'action");
+        if (!numero.matches("[0-9]{8}_[0-9]{3}")) throw new IllegalArgumentException("Le numéro de traitement doit être de la forme XXXXXXXX_XXX");
+
     }
 
     @Override

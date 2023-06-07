@@ -1,4 +1,4 @@
 Numero;Designation;Format;Actions;Emplacement;QrCode
 42400138;VPort P06HC-1MP CAM36-CT (Cubic) V1.0.0;^[a-zA-Z]{5}[0-9]{7}$;OF-OC;A-36-GB-07;autres
 42400131;VPort P06-2M60M V1.2.2;^[a-zA-Z]{5}[0-9]{7}$;OF-OC;A-36-GB-07;autres
-95006177;CAMERA-DOME-DIRECTIVE-VP-TER;[a-zA-Z]{3}[0-9]{5};OF-OC;A-36-GB-07;autres
+95006177;CAMERA-DOME-DIRECTIVE-VP-TER;[a-zA-Z]{3}[0-9]{5};OF-Ordre de Commande;A-36-GB-07;autres

@@ -301,7 +301,6 @@ class ControllerSaisieTest extends ApplicationTest {
         verify(inputNoLigne,never()).setDisable(true);
         verify(inputNoLigne,never()).setDisable(true);
         verify(inputNumeroSerieContainer,never()).getChildren();
-        verify(boiteErreur).setText("Aucun article n'a pus être chargé .");
     }
 
     @Test
@@ -333,7 +332,6 @@ class ControllerSaisieTest extends ApplicationTest {
         verify(inputNoLigne,never()).setDisable(true);
         verify(inputNoLigne,never()).setDisable(true);
         verify(inputNumeroSerieContainer,never()).getChildren();
-        verify(boiteErreur).setText("Il n'y a aucune action renseigner pour cet article .");
     }
     @Test
     void commencerSaisieArticleNonSelectionner() throws NoSuchFieldException {
@@ -463,7 +461,6 @@ class ControllerSaisieTest extends ApplicationTest {
         ObservableList listActions = mock(ObservableList.class);
         doReturn("autres.png").when(article).getQrCode();
         doReturn("42400131 VPort P06-2M60M V1.2.2").when(article).toString();
-        doReturn(new String[]{"OC","OF"}).when(article).getActions();
         config.pathQrCodes = getClass().getResource("../qrcodes/").getPath();
         File file = new File(getClass().getResource("../qrcodes/").getPath());
         for (File f : file.listFiles()) {
@@ -503,7 +500,6 @@ class ControllerSaisieTest extends ApplicationTest {
         verify(btnAnnulerSaisie).setDisable(true);
         verify(inputNoCommande).setDisable(false);
         verify(inputNoLigne).setDisable(false);
-        verify(commande).clear();
         verify(compteurNbProduitSaisie).setText("");
     }
     @Test

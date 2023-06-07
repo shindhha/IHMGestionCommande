@@ -61,6 +61,8 @@ public class ControllerSaisie implements Initializable {
     private TextField inputNoLigne;
     @FXML
     private MenuButton outilsConfig;
+    @FXML
+    private TextField searchBar;
     private Scene primaryScene;
     private TextField inputNumeroSerie;
     private HashMap<String,Article> articles;
@@ -86,6 +88,8 @@ public class ControllerSaisie implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        listActions.getItems().add("Ordre de Fabrication");
+        listActions.getItems().add("Ordre de Commande");
 
     }
     public void popUpMdp() {
@@ -123,7 +127,7 @@ public class ControllerSaisie implements Initializable {
      */
     public void initScene(Scene scene) {
         this.primaryScene = scene;
-        listArticles.setOnKeyPressed(event -> onRechercheArticle(event));
+        searchBar.setOnKeyPressed(event -> onRechercheArticle(event));
         loadArticle();
         listArticles.setOnAction(event -> useArticle(getSelectedArticle()));
         enableChamp(listArticles, listActions, inputNbArticle, btnCommencerSaisie, inputNoCommande,inputNoLigne);
@@ -148,7 +152,6 @@ public class ControllerSaisie implements Initializable {
         if (event.getCode().isLetterKey() || event.getCode().isDigitKey()) {
             mot_recherche_article.append(event.getText());
         }
-        listArticles.setPromptText("Recherche : " + mot_recherche_article.toString());
         if (mot_recherche_article.length() == 0)
             listArticles.setPromptText("Sélectionner l'article générique");
         printArticle(filtrerArticle(mot_recherche_article.toString(), articles));
@@ -193,10 +196,6 @@ public class ControllerSaisie implements Initializable {
      */
     public void useArticle(Article selectedArticle) {
         inputNumeroSerieContainer.getChildren().clear();
-        listActions.getItems().clear();
-        for (String action : selectedArticle.getActions()) {
-            listActions.getItems().add(action);
-        }
         // créer une image avec le qr code de l'article sélectionné
         qrCodeView.setImage(new Image(config.pathQrCodes + selectedArticle.getQrCode()));
     }
@@ -313,16 +312,12 @@ public class ControllerSaisie implements Initializable {
      *                               pour le définir par défaut.
      */
     private Commande makeCommande(String type) throws IllegalStateException {
-        if (inputNbArticle.getText().isEmpty() || Integer.parseInt(inputNbArticle.getText()) <= 0) inputNbArticle.setText(nombreMaxArticleDefaut);
+        if (inputNbArticle.getText().isEmpty() || Integer.parseInt(inputNbArticle.getText()) <= 0) throw new IllegalStateException("Vous devez saisir un nombre d'article valide");
         if (listArticles.getValue() == null || listArticles.getValue().isEmpty()) {
-            if (listArticles.getItems().size() > 0)
-                listArticles.setValue(listArticles.getItems().get(0));
-            else throw new IllegalStateException("Aucun article n'a pus être chargé .");
+            throw new IllegalStateException("Veuillez choisir un article");
         }
         if (listActions.getValue() == null || listActions.getValue().isEmpty()) {
-            if (listActions.getItems().size() > 0)
-                listActions.setValue(listActions.getItems().get(0));
-            else throw new IllegalStateException("Il n'y a aucune action renseigner pour cet article .");
+            throw new IllegalStateException("Veuillez sélectionner l'action a effectuer sur l'article");
         }
         CommandeFactory factory = new CommandeFactory(inputNoCommande.getText(),
                 getSelectedArticle(),
