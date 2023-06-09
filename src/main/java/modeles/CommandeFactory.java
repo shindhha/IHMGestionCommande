@@ -6,6 +6,8 @@ public class CommandeFactory {
     int nbArticle;
     Article article;
     public CommandeFactory(String numero, Article article, int quantiteMax, String ligne) {
+        if (article == null) throw new IllegalArgumentException("Veuillez renseigner un article");
+        if (numero == null || numero.isEmpty()) throw new IllegalArgumentException("Veuillez renseigner un numéro de commande");
         this.noCommande = numero;
         this.article = article;
         this.nbArticle = quantiteMax;

@@ -127,10 +127,10 @@ public class ControllerSaisie implements Initializable {
      */
     public void initScene(Scene scene) {
         this.primaryScene = scene;
-        searchBar.setOnKeyPressed(event -> onRechercheArticle(event));
+        searchBar.setOnKeyPressed(event -> printArticle(filtrerArticle(searchBar.getText(), articles)));
         loadArticle();
         listArticles.setOnAction(event -> useArticle(getSelectedArticle()));
-        enableChamp(listArticles, listActions, inputNbArticle, btnCommencerSaisie, inputNoCommande,inputNoLigne);
+        enableChamp(listArticles, listActions, inputNbArticle, btnCommencerSaisie, inputNoCommande,inputNoLigne,searchBar);
         disableChamp(btnTerminerSaisie, btnAnnulerSaisie);
     }
 
@@ -276,7 +276,7 @@ public class ControllerSaisie implements Initializable {
             inputNumeroSerie.setPromptText("Saisissez le numéro de série");
             inputNumeroSerie.getStyleClass().add("textField");
             inputNumeroSerieContainer.getChildren().add(inputNumeroSerie);
-            disableChamp(listArticles, listActions, inputNbArticle, btnCommencerSaisie, inputNoCommande,inputNoLigne);
+            disableChamp(listArticles, listActions, inputNbArticle, btnCommencerSaisie, inputNoCommande,inputNoLigne,searchBar);
             btnAnnulerSaisie.setDisable(false);
             primaryScene.setOnKeyReleased(event -> onSaisieNumeroSerie(event));
 
@@ -313,9 +313,7 @@ public class ControllerSaisie implements Initializable {
      */
     private Commande makeCommande(String type) throws IllegalStateException {
         if (inputNbArticle.getText().isEmpty() || Integer.parseInt(inputNbArticle.getText()) <= 0) throw new IllegalStateException("Vous devez saisir un nombre d'article valide");
-        if (listArticles.getValue() == null || listArticles.getValue().isEmpty()) {
-            throw new IllegalStateException("Veuillez choisir un article");
-        }
+
         if (listActions.getValue() == null || listActions.getValue().isEmpty()) {
             throw new IllegalStateException("Veuillez sélectionner l'action a effectuer sur l'article");
         }
@@ -337,7 +335,7 @@ public class ControllerSaisie implements Initializable {
     public void setDefaultIHMState() {
         primaryScene.setOnKeyReleased(null);
         listProduitsSaisie.getChildren().clear();
-        enableChamp(listArticles, listActions, inputNbArticle, btnCommencerSaisie, inputNoCommande,inputNoLigne);
+        enableChamp(listArticles, listActions, inputNbArticle, btnCommencerSaisie, inputNoCommande,inputNoLigne,searchBar);
         disableChamp(btnTerminerSaisie, btnAnnulerSaisie);
         inputNumeroSerieContainer.getChildren().clear();
         updateCompteur(0);

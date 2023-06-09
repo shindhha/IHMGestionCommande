@@ -78,6 +78,7 @@ class ControllerSaisieTest extends ApplicationTest {
     private ControllerSaisie controllerTest;
     @Override
     public void start(Stage stage) throws Exception {
+        MockitoAnnotations.openMocks(this);
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/vue.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Gestions Commandes");
@@ -241,6 +242,7 @@ class ControllerSaisieTest extends ApplicationTest {
         verify(inputNoCommande).setDisable(true);
         verify(inputNoLigne).setDisable(true);
         verify(btnAnnulerSaisie).setDisable(false);
+
     }
 
     @Test
