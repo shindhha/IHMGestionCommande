@@ -29,7 +29,7 @@ class CommandeTest {
         Article article = mock(Article.class);
         doReturn("^[a-zA-Z]{5}[0-9]{7}$").when(article).getFormat();
         doReturn(numero).when(article).getNumero();
-        Commande currentCommande = new OF("11122233_666",article,50,"5");
+        Commande currentCommande = new OF("11122233_666",article,50);
         currentCommande.ajouterNumeroSerie(numero);
         // On attend qu'une erreur soit propagée lors de l'ajout du numéro de série
         Exception e = assertThrowsExactly(IllegalStateException.class,() -> currentCommande.ajouterNumeroSerie(numero));
@@ -44,7 +44,7 @@ class CommandeTest {
         Article article = mock(Article.class);
         doReturn("^[a-zA-Z]{5}[0-9]{7}$").when(article).getFormat();
         doReturn(numero).when(article).getNumero();
-        Commande currentCommande = new OF("11122233_666",article,1,"5");
+        Commande currentCommande = new OF("11122233_666",article,1);
         currentCommande.ajouterNumeroSerie(numero);
         // On attend qu'une erreur soit propagée lors de l'ajout du numéro de série
         Exception e = assertThrowsExactly(IllegalStateException.class,() -> currentCommande.ajouterNumeroSerie(numero));
@@ -58,7 +58,7 @@ class CommandeTest {
         String numero = "TBAKE10379";
         Article article = mock(Article.class);
         doReturn("^[a-zA-Z]{5}[0-9]{7}$").when(article).getFormat();
-        Commande currentCommande = new OF("11122233_666",article,1,"5");
+        Commande currentCommande = new OF("11122233_666",article,1);
         // On attend qu'une erreur soit propagée lors de l'ajout du numéro de série
         Exception e = assertThrowsExactly(FormatInvalideException.class,() -> currentCommande.ajouterNumeroSerie(numero));
         assertEquals(e.getMessage() , "Le format du numéro de série est invalide !");
@@ -71,7 +71,7 @@ class CommandeTest {
         Article article = mock(Article.class);
         doReturn("\\d").when(article).getFormat();
         doReturn("960000").when(article).getNumero();
-        Commande currentCommande = new OF("11122233_666",article,5,"5");
+        Commande currentCommande = new OF("11122233_666",article,5);
         currentCommande.ajouterNumeroSerie("1");
         currentCommande.ajouterNumeroSerie("2");
         currentCommande.ajouterNumeroSerie("3");
@@ -102,7 +102,7 @@ class CommandeTest {
         Article article = mock(Article.class);
         doReturn("\\d").when(article).getFormat();
         doReturn("960000").when(article).getNumero();
-        Commande currentCommande = new OC("OC11122233",article,5,"5");
+        Commande currentCommande = new OC("OC11122233",article,5);
         currentCommande.ajouterNumeroSerie("1");
         currentCommande.ajouterNumeroSerie("2");
         currentCommande.ajouterNumeroSerie("3");

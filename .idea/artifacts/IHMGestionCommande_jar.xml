@@ -2,7 +2,7 @@
   <artifact type="jar" name="IHMGestionCommande:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/IHMGestionCommande_jar</output-path>
     <root id="archive" name="IHMGestionCommande.jar">
-      <element id="module-output" name="IHMGestionCommande" />
+      <element id="module-output" name="ScanNumeroSerie" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/assertj/assertj-core/3.13.2/assertj-core-3.13.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/javazoom/jlayer/1.0.1/jlayer-1.0.1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-controls/20-ea+4/javafx-controls-20-ea+4-win.jar" path-in-jar="/" />

@@ -1,4 +1,5 @@
 package controllers;
+import javafx.scene.control.ScrollPane;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.advanced.AdvancedPlayer;
 import javafx.fxml.FXML;
@@ -24,6 +25,7 @@ import modeles.*;
 import services.Configuration;
 
 import java.awt.*;
+
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -58,11 +60,11 @@ public class ControllerSaisie implements Initializable {
     @FXML
     private ImageView qrCodeView;
     @FXML
-    private TextField inputNoLigne;
-    @FXML
     private MenuButton outilsConfig;
     @FXML
     private TextField searchBar;
+    @FXML
+    private ScrollPane scrollNum;
     private Scene primaryScene;
     private TextField inputNumeroSerie;
     private HashMap<String,Article> articles;
@@ -130,7 +132,7 @@ public class ControllerSaisie implements Initializable {
         searchBar.setOnKeyPressed(event -> printArticle(filtrerArticle(searchBar.getText(), articles)));
         loadArticle();
         listArticles.setOnAction(event -> useArticle(getSelectedArticle()));
-        enableChamp(listArticles, listActions, inputNbArticle, btnCommencerSaisie, inputNoCommande,inputNoLigne,searchBar);
+        enableChamp(listArticles, listActions, inputNbArticle, btnCommencerSaisie, inputNoCommande,searchBar);
         disableChamp(btnTerminerSaisie, btnAnnulerSaisie);
     }
 
@@ -211,18 +213,25 @@ public class ControllerSaisie implements Initializable {
 
         try {
             String finalNumeroSerie = currentCommande.ajouterNumeroSerie(numeroSerie);
-            boiteErreur.setText("");
             Label label = new Label(finalNumeroSerie);
             Button button = new Button("X");
             HBox hbox = new HBox();
+            label.widthProperty().addListener((observable, oldValue, newValue) -> {
+                double availableSpace = hbox.getWidth() - newValue.intValue() - 50;
+                label.setMinWidth(newValue.intValue());
+                hbox.setSpacing(availableSpace);
+                hbox.layout();
+            });
             hbox.getChildren().addAll(label,button);
             button.setOnAction(event -> onDeleteProduit(hbox, finalNumeroSerie));
             listProduitsSaisie.getChildren().add(hbox);
             updateCompteur(currentCommande.size());
             playSound(true);
+            boiteErreur.setText("");
         } catch (FormatInvalideException | IllegalStateException e) {
             boiteErreur.setText(e.getMessage());
             playSound(false);
+            e.printStackTrace();
         } finally {
             inputNumeroSerie.clear();
         }
@@ -272,14 +281,16 @@ public class ControllerSaisie implements Initializable {
         try {
             currentCommande = makeCommande(listActions.getValue());
             inputNumeroSerie = new TextField();
-            inputNumeroSerie.requestFocus();
+
             inputNumeroSerie.setPromptText("Saisissez le numéro de série");
             inputNumeroSerie.getStyleClass().add("textField");
+
             inputNumeroSerieContainer.getChildren().add(inputNumeroSerie);
-            disableChamp(listArticles, listActions, inputNbArticle, btnCommencerSaisie, inputNoCommande,inputNoLigne,searchBar);
+            inputNumeroSerie.requestFocus();
+            disableChamp(listArticles, listActions, inputNbArticle, btnCommencerSaisie, inputNoCommande,searchBar);
             btnAnnulerSaisie.setDisable(false);
             primaryScene.setOnKeyReleased(event -> onSaisieNumeroSerie(event));
-
+            boiteErreur.setText("");
         } catch (NumberFormatException e) {
             boiteErreur.setText("Le nombre d'article doit être un nombre");
         } catch (IllegalStateException | IllegalArgumentException e) {
@@ -299,6 +310,8 @@ public class ControllerSaisie implements Initializable {
             if (event.getCode() == KeyCode.DOWN) {
                 inputNumeroSerie.requestFocus();
                 ajouterNumeroSerie(inputNumeroSerie.getText());
+
+                listProduitsSaisie.heightProperty().addListener((observable, oldValue, newValue) -> scrollNum.setVvalue(newValue.doubleValue()));
             }
         } catch (IllegalStateException e) {
             boiteErreur.setText(e.getMessage());
@@ -319,8 +332,7 @@ public class ControllerSaisie implements Initializable {
         }
         CommandeFactory factory = new CommandeFactory(inputNoCommande.getText(),
                 getSelectedArticle(),
-                Integer.parseInt(inputNbArticle.getText()),
-                inputNoLigne.getText());
+                Integer.parseInt(inputNbArticle.getText()));
 
         return factory.createCommande(type);
     }
@@ -335,7 +347,7 @@ public class ControllerSaisie implements Initializable {
     public void setDefaultIHMState() {
         primaryScene.setOnKeyReleased(null);
         listProduitsSaisie.getChildren().clear();
-        enableChamp(listArticles, listActions, inputNbArticle, btnCommencerSaisie, inputNoCommande,inputNoLigne,searchBar);
+        enableChamp(listArticles, listActions, inputNbArticle, btnCommencerSaisie, inputNoCommande,searchBar);
         disableChamp(btnTerminerSaisie, btnAnnulerSaisie);
         inputNumeroSerieContainer.getChildren().clear();
         updateCompteur(0);
@@ -390,7 +402,7 @@ public class ControllerSaisie implements Initializable {
         directoryChooser.setTitle("Choisir le répertoire de sortie");
         File selectedDirectory = directoryChooser.showDialog(primaryScene.getWindow());
         if (selectedDirectory != null) {
-            config.pathOutPutFolder = selectedDirectory.getAbsolutePath() + "\\";
+            config.pathOutPutFolder = selectedDirectory.getAbsolutePath();
         }
         config.writeConfigFile();
     }

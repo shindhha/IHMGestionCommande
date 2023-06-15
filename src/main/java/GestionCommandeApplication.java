@@ -14,7 +14,7 @@ public class GestionCommandeApplication extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/vue.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        stage.setTitle("Gestions Commandes");
+        stage.setTitle("Scan numéro de série");
         stage.setScene(scene);
         stage.show();
         ControllerSaisie controller = fxmlLoader.getController();

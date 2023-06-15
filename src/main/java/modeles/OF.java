@@ -4,10 +4,14 @@ package modeles;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class OF extends Commande {
-    public OF(String numero, Article article, int quantiteMax, String ligne) {
-        super(numero, article, quantiteMax, ligne);
+    public OF(String numero, Article article, int quantiteMax) {
+        super(numero, article, quantiteMax);
         if (numero.matches("OC[0-9]{8}")) throw new IllegalArgumentException("Format du numéro de traitement incohérent avec le choix de l'action");
         if (!numero.matches("[0-9]{8}_[0-9]{3}")) throw new IllegalArgumentException("Le numéro de traitement doit être de la forme XXXXXXXX_XXX");
 
@@ -15,21 +19,20 @@ public class OF extends Commande {
 
     @Override
     public String getFileOutPutName() {
-        return "OF-"+ numero + "-" + ligne +"L-"+ article.getNumero() + "-" +quantiteMax +".csv";
+        return "OF-"+ numero + "-" + article.getNumero() + "-" + quantiteMax + "-" + date;
     }
 
     @Override
     public void makeOutPutFile(String pathOutPutFolder) throws IOException {
-        File outputFile = new File(pathOutPutFolder + getFileOutPutName());
-        FileWriter fileWriter = new FileWriter(outputFile);
+        File outputFile = new File(pathOutPutFolder + "\\" + getFileOutPutName() + ".csv");
+        FileWriter fileWriter = new FileWriter(outputFile, StandardCharsets.UTF_8);
         fileWriter.write("Numéro de commande : " + numero + ";");
-        fileWriter.write("Numéro de ligne : " + ligne + ";");
         fileWriter.write("Article : " + article.getDesignation() + ";");
         fileWriter.write("Quantité : " + quantiteMax + ";");
-        fileWriter.write("Personne ayant éffectué la commande : " + System.getProperty("user.name") + "\n");
+        fileWriter.write("Personne ayant éffectué la commande : " + System.getProperty("user.name") + "\r\n");
         for (String numeroSerie : listNumeroSerie) {
             fileWriter.write(numero + ";");
-            fileWriter.write(numeroSerie + "\n");
+            fileWriter.write(numeroSerie + "\r\n");
         }
         fileWriter.close();
     }

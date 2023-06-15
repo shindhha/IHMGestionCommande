@@ -2,7 +2,10 @@ package modeles;
 
 import exceptions.FormatInvalideException;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,21 +15,22 @@ public abstract class Commande {
     protected Article article;
     protected int quantiteMax;
     protected String date;
-    protected String ligne;
     protected ArrayList<String> listNumeroSerie;
 
     private Pattern pattern;
     public abstract void makeOutPutFile(String pathOutPutFolder) throws IOException;
 
-    public Commande(String numero, Article article, int quantiteMax, String ligne) {
-        if (ligne.isEmpty()) throw new IllegalStateException("Veuillez saisir le numéro de ligne .");
+    public Commande(String numero, Article article, int quantiteMax) {
         if (numero.isEmpty()) throw new IllegalStateException("Veuillez saisir le numéro de commande .");
         pattern = Pattern.compile(article.getFormat());
         this.numero = numero;
         this.article = article;
         this.quantiteMax = quantiteMax;
-        this.ligne = ligne;
         this.listNumeroSerie = new ArrayList<>();
+        Date date = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        this.date = dateFormat.format(date);
+
     }
 
     public String ajouterNumeroSerie(String numeroSerie) throws FormatInvalideException, IllegalStateException {
